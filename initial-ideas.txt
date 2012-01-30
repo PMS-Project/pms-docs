@@ -1,0 +1,52 @@
+ChatServer/Client (Chat-O-Mat4000) P.M.S. (Perl Messaging System)
+
+Html/JS Client -> Websocket oder Polling (alternativ Perl Client)
+  -> Befehle: /connect ip:port
+              /open <channel>
+  -> nur wenn Zeit ist multiple chats
+
+Perl Server 
+  -> User werden in der DB gespeichert
+  -> Channel + Backlog in der DB
+  -> Userrechte (zB Wer darf Channel erstellen, Channel OPs (wenn noch Zeit ist)
+  -> Usergruppen denen man Rechte zuordnen kann (Admins, User  verlinkung aus der Channel Tabelle welche Gruppe und User ChannelOp ist)
+  -> Async IO ist Threads vorzuziehen 
+  -> Kommunikation über JSON
+  -> Befehle:
+	/create <channel>   -> erstellt channel
+	/delete <channel>   -> löscht channel 
+	/nick   <nickname>  -> anon user
+        /ident  <nick> <pass> -> identifiziert administrator
+	----Wenn noch Zeit ist-----
+	/kick   <user>
+	/ban    <ip>
+	/whois  <user>
+	/message <user>
+	Regel: 1.Zeichen muss / sein ansonsten -> Nachricht
+    -> Erweiterbarkeit:
+	    -> Message Queue (Module können sich in der Queue registrieren und so Messages parsen)
+	    -> Module registrieren sich über _module_init()
+	    -> Konfiguration über ini File zB:
+	       [Modules]
+
+	
+  
+  Links:
+  - http://dev.perl.org/perl6/rfc/47.html#___top
+  - https://github.com/vti/protocol-websocket
+  - http://search.cpan.org/~vti/Protocol-WebSocket-0.00906/lib/Protocol/WebSocket.pm
+  - http://showmetheco.de/articles/2011/2/diving-into-html5-with-websockets-and-perl.html
+  
+
+Protokoll:
+  -> /open pms
+  <- OK \n
+  <- <channel>;<date>;<name>;<message>
+  <- <channel>;<date>;<name>;<message>
+  <- <channel>;<date>;<name>;<message>
+  <- <channel>;<date>;<name>;<message>
+  <- <channel>;<date>;<name>;<message>
+  <- <channel>;<date>;<name>;<message>
+  <- <channel>;<date>;<name>;<message>
+  <- <channel>;<date>;<name>;<message>
+  <- <channel>;<date>;<name>;<message>
