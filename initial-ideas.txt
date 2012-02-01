@@ -60,3 +60,53 @@ Mögliches Protokoll:
   Netstring + Base64 encoding eines UTF8 Strings (Netstring ist nur ASCII tauglich)
   http://cr.yp.to/proto/netstrings.txt
   ->Perl AnyEvent hat Kompatibilität zu Netstring
+
+Datenbank:
+    Users{
+      int id;
+      string name;
+      bytes  password;
+    }
+
+    Groups{
+      int id;
+      string name;
+    }
+
+    Roles{
+      int id;
+      string rolename;
+    }
+
+    User_to_Groups{
+      ref userId;
+      ref groupId;
+    }
+
+    User_to_Roles{
+      ref nameId;
+      ref roleId;
+    }
+
+    Groups_to_Roles{
+      ref groupId;
+      ref roleId;
+    }
+
+    Settings{
+      string key;
+      string value;
+    }
+    Channels{
+        ref ChannelOp;
+        string ChannelName;
+        string ChannelTopic;
+    }
+
+    Backlog{
+      int id;
+      ref channelId;
+      ref userId;
+      date messageDate;
+    }
+

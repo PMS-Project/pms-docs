@@ -6,7 +6,9 @@ use AnyEvent::Handle;
 use AnyEvent::Socket;
 
 my $cv = AnyEvent->condvar();
-my %clients = {};
+my %clients = ();
+
+warn "Numbers of Elements: ".keys(%clients);
 
 #POSIX signal for terminating Server:
 my $w = AnyEvent->signal (
@@ -21,8 +23,10 @@ my $time_watcher = AnyEvent->timer (after => 1, interval => 1, cb => sub {
 });
 
  # a simple tcp server
-tcp_server undef, 8888, sub {
+tcp_server (undef, 8888, sub {
   my ($fh, $host, $port) = @_;
+
+  warn "Incoming Connection";
 
   #TODO check host and port
   $clients{$fh} = new AnyEvent::Handle(
@@ -42,40 +46,24 @@ tcp_server undef, 8888, sub {
       warn "Something happend";
       warn ($line);
 
+      warn "Clients Connected".keys(%clients);
+
+      foreach my $k (keys %clients){
+        warn "Key: ".$k;
+        if($k ne $hdl->fh()){
+            if(defined($clients{$k})){
+                $clients{$k}->push_write($line);
+            }
+        }
+      }
+
       # push next request read, possibly from a nested callback
+      warn "Pushing new Read Request";
       $hdl->push_read (@start_request);
    });
 		  
 	$clients{$fh}->push_read (@start_request);
   
-};
+});
 
-$cv->recv; # wait until user enters /^q/i
-
-
-
-
-
-#use IO::Select;
-#use IO::Socket;
-
-#$lsn = IO::Socket::INET->new(Listen => 1, LocalPort => 8080);
-#$sel = IO::Select->new( $lsn );
-#while(@ready = $sel->can_read) {
-#  foreach $fh (@ready) {
-#    if($fh == $lsn) {
-#      # Create a new socket
-#      $new = $lsn->accept;
-#      $sel->add($new);
-#    }else {
-#      # Process socket
-#      
-#      #
-#
-#
-#      # Maybe we have finished with the socket
-#      $sel->remove($fh);
-#      $fh->close;
-#    }
-#  }
-#}
+$cv->recv; #eventloop
