@@ -11,7 +11,6 @@ Perl Server
   -> Userrechte (zB Wer darf Channel erstellen, Channel OPs (wenn noch Zeit ist)
   -> Usergruppen denen man Rechte zuordnen kann (Admins, User  verlinkung aus der Channel Tabelle welche Gruppe und User ChannelOp ist)
   -> Async IO ist Threads vorzuziehen 
-  -> Kommunikation über JSON
   -> Befehle:
 	/create <channel>   -> erstellt channel
 	/delete <channel>   -> löscht channel 
@@ -36,9 +35,15 @@ Perl Server
   - https://github.com/vti/protocol-websocket
   - http://search.cpan.org/~vti/Protocol-WebSocket-0.00906/lib/Protocol/WebSocket.pm
   - http://showmetheco.de/articles/2011/2/diving-into-html5-with-websockets-and-perl.html
+  Perl Debugger:
+  - http://perldoc.perl.org/perldebug.html
+  Dynamischen Laden von Modulen:
+  - http://search.cpan.org/~bingos/Module-Load/lib/Module/Load.pm
+  - http://docstore.mik.ua/orelly/perl/cookbook/ch13_08.htm
+
   
 
-Protokoll:
+ChatMessages:
   -> /open pms
   <- OK \n
   <- <channel>;<date>;<name>;<message>
@@ -50,3 +55,8 @@ Protokoll:
   <- <channel>;<date>;<name>;<message>
   <- <channel>;<date>;<name>;<message>
   <- <channel>;<date>;<name>;<message>
+
+Mögliches Protokoll:
+  Netstring + Base64 encoding eines UTF8 Strings (Netstring ist nur ASCII tauglich)
+  http://cr.yp.to/proto/netstrings.txt
+  ->Perl AnyEvent hat Kompatibilität zu Netstring
