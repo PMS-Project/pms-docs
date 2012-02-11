@@ -107,6 +107,7 @@ Datenbank:
       int id;
       ref channelId;
       ref userId;
-      date messageDate;
+      date msgDate;
+      string message;
     }
 
