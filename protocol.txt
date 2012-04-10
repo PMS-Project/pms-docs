@@ -1,0 +1,21 @@
+
+Buildin Messages and Responses:
+
+Client: Request:  /send "Channel" "Message"
+Server: Success:  /message "Channel" "Nickname" "DateTime" "Message"
+        Error:    /error   "Channel" "Message"   
+        
+Client: Request: /join "Channel"
+Server: Success: /openwindow "Channel"
+        Error:   /error "Default" "Message"
+        
+Client: Request: /leave "Channel"
+        Success: /closewindow "Channel"
+        Error  : /error "Default" "Message"
+        
+        
+
+ServerMessages
+
+ | Command |      Arguments                  | Description
+ |  /send  |   channel:string,message:string | A message sent from a Client

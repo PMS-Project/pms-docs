@@ -21,7 +21,7 @@ AnyEvent::Socket::tcp_server undef, 3000, sub {
 
     $hdl = AnyEvent::Handle->new(fh => $clsock);
 
-    warn "New Connection";      
+    warn "New Connection";
 
     $hdl->on_read(
         sub {

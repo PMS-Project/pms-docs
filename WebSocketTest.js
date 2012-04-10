@@ -7,7 +7,7 @@ function test()
   }
   if ("WebSocket" in window){
   //  // Google example code
-    ws = new WebSocket("ws://localhost:3000");
+    ws = new WebSocket("ws://localhost:8888");
     ws.onopen = function(){
         // Web Socket is connected. You can send data by send() method
         ws.send("Dies ist ein Test");

@@ -123,37 +123,30 @@ Datenbank:
           "port" : 15000
         }
       }
-      "modules" :
-      [
-        {
-           "name"   : "Database",
-           "config" : {
-              "server" : "localhost:port",
-              "database" : "dbName",
-              "user"     : "username",
-              "password" : "pw"
-           }
+      "modules" :{
+        
+        "Database" : {
+          "server" : "localhost:port",
+          "database" : "dbName",
+          "user"     : "username",
+          "password" : "pw"
         },
-        {
-          "name"     :    "Auth"
-          "requires" :    "Database"
+        
+        "Auth" : {
+          "requires" : "Database"
         },
-        {
-          "name"     :    "Security"
-          "config"   :    {
-              "canConnect" : ["192.168.1.*"],
-              "canNotConnect" : ["*"]
-          }
+        
+        "Security" : {
+          "canConnect" : ["192.168.1.*"],
+          "canNotConnect" : ["*"]
         },
-        {
-          "name"     :    "Motd"
-          "config"   :    {
-              "message" : ["Line 1: This is the motd thing",
+        
+        "Motd" : {
+          "message" : ["Line 1: This is the motd thing",
                      "Line 2: This is the motd thing",
                      "Line 3: This is the motd thing"]
-          }
         }
-      ]
+      }
     }
     
     
