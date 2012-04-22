@@ -1,0 +1,94 @@
+P.M.S Perl - Messaging System
+=============================
+Benjamin Zeller, Lukas Michalski , Thorsten Schwalb
+v1.0, 2012-04
+:doctype: book
+
+[preface]
+Einleitung
+----------
+Dieses Dokument beschreibt die Funktionsweise und Implementation
+des Perl Messaging Systems, also den Core-Server, die Erweiterung durch 
+Module, das Admin Interface und den Chat Client.
+Die Implementation und Entwicklung dieser Software erfolgte im Rahmen 
+der Technikerausbildung im Schuljahr 2011/12 in der Klasse ITT7/8.
+
+Die Arbeiten an der Software wurden gemeinschaftlich von Lukas Michalsi,
+Benjamin Zeller und Thorsten Schwalb durchgeführt.
+
+Core-System
+~~~~~~~~~~~
+Das meisste Augenmerk lag hierbei auf dem Herzstück des PMS , dem Core.
+Die Hauptziele bei der Impementation des Cores waren wie folgt:
+
+. Implementation eines Multi-Channel Multi-User Chatservers
+. Quasi parallele Verarbeitung mehrerer Connections
+. Schnelle Asynchrone Verarbeitung der Commands, durch Eventbasierte Programmierung
+. Erweiterbarkeit durch Modularisierung
+.. Erweiterbarkeit der Userfunktionen durch Plugins
+.. Erweiterbarkeit der Connectivity durch sogenannte Connection Provider
+. Implementation eines einfachen Chatprotokolls
+. Möglichst lose Objektkopplung zwischen den Plugins und dem Core
+
+Alle dieser Ziele wurden bis zum Projektende in die Tat umgesetzt und liegen
+in der aktuellen Softwareversion vor.
+
+Erweiterungs-Module
+~~~~~~~~~~~~~~~~~~~
+Die Erweiterungsmodule, sollen demonstrieren auf welche Weise es möglich ist 
+den P.M.S. Server zu erweitern. Vor allem das Security Modul ist hierbei 
+hervorzuheben, da es fast die komplette Palette der Möglichkeiten ausnutzt.
+
+HTML5 - Chat Client
+~~~~~~~~~~~~~~~~~~~
+Der Chat Client ist die Referenzimplementation eines Clients, basierend auf
+einer Kombination von Html und Javascript.
+Die Hauptziele der Implementation waren wie folgt:
+
+. Komplette Referenzimplementation des P.M.S. Chatprotokolls
+. Die Möglichkeit in mehreren Channeln gleichzeitig chatten zu können
+. Moderne und ansprechende HTML5 basierte Oberfläche
+
+Admin-Interface
+~~~~~~~~~~~~~~~
+Das Admin Interface wird benötigt, um auf die von Modulen bereitgestellten
+Daten zugreifen zu können, oder diese zu konfigurieren. Die Implementierung 
+erfolgte in Perl, Javascript und Html. 
+
+///////////////////
+- Parser
+- Events
+- Signale
+- Netstring
+- Observer Pattern
+//////////////////
+
+Implementation, Funktionsweise und Design des Core-Systems
+----------------------------------------------------------
+Die komplette Implementation des Cores erfolgte in Perl und wurde als reine 
+objektorienterte, eventbasierte Software konzipiert. Hierbei wurde folgende 
+Fremdsoftware verwendet:
+
+- AnyEvent (6.14)
++
+..................................
+Das AnyEvent Modul stellt den vom P.M.S. verwendeted Event-Loop und einige Helferklassen bereit.
+Es ermöglicht eine sogenannte asynchrone-Programmierung, diese versetzt
+den P.M.S. Core in die Lage mehrere Operationen quasi-parallel auszuführen.
+So muss man zum Beispiel nicht darauf warten, bis eine Schreiboperation auf
+einen Dateideskriptor beendet ist, sondern das System kümmert sich um dessen 
+Fertigstellung. Dabei kann man jedem asynchronen Aufruf diverse Callback Funktionen 
+mitgeben, die nach erfolgreicher Fertigstellung des Befehls, oder sogar im Fehlerfall aufgerufen 
+werden können.
+..................................
+
+- Object::Event (1.23)
++
+..................................
+Dieses Modul stellt das sogenannte Observer-Pattern zur Verfügung, das es uns ermöglicht interne 
+Signale (Events) zu verschicken und zu verarbeiten. Es ermöglicht dem Core komplett ohne das Wissen
+über eventuell geladene Module, oder deren Voraussetzungen zu operieren.
+..................................
+
+
+
