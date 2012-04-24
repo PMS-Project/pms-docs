@@ -3,6 +3,7 @@ P.M.S Perl - Messaging System
 Benjamin Zeller, Lukas Michalski , Thorsten Schwalb
 v1.0, 2012-04
 :doctype: book
+:pmsdocs: file:///home/zbenjamin/workspace/pms-project/pms-docs/pms-server
 
 [preface]
 Einleitung
@@ -65,30 +66,195 @@ erfolgte in Perl, Javascript und Html.
 
 Implementation, Funktionsweise und Design des Core-Systems
 ----------------------------------------------------------
+
+Allgemein
+~~~~~~~~~
 Die komplette Implementation des Cores erfolgte in Perl und wurde als reine 
 objektorienterte, eventbasierte Software konzipiert. Hierbei wurde folgende 
 Fremdsoftware verwendet:
 
 - AnyEvent (6.14)
 +
-..................................
-Das AnyEvent Modul stellt den vom P.M.S. verwendeted Event-Loop und einige Helferklassen bereit.
-Es ermöglicht eine sogenannte asynchrone-Programmierung, diese versetzt
-den P.M.S. Core in die Lage mehrere Operationen quasi-parallel auszuführen.
+----
+Das AnyEvent Modul stellt den vom P.M.S. verwendeten Event-Loop
+und einige Helferklassen bereit.Es ermöglicht eine sogenannte asynchrone-Programmierung, 
+diese versetzt den P.M.S. Core in die Lage mehrere Operationen quasi-parallel auszuführen.
 So muss man zum Beispiel nicht darauf warten, bis eine Schreiboperation auf
 einen Dateideskriptor beendet ist, sondern das System kümmert sich um dessen 
 Fertigstellung. Dabei kann man jedem asynchronen Aufruf diverse Callback Funktionen 
-mitgeben, die nach erfolgreicher Fertigstellung des Befehls, oder sogar im Fehlerfall aufgerufen 
-werden können.
-..................................
+mitgeben, die nach erfolgreicher Fertigstellung des Befehls, oder sogar im Fehlerfall 
+aufgerufen werden.
+----
 
 - Object::Event (1.23)
 +
-..................................
-Dieses Modul stellt das sogenannte Observer-Pattern zur Verfügung, das es uns ermöglicht interne 
-Signale (Events) zu verschicken und zu verarbeiten. Es ermöglicht dem Core komplett ohne das Wissen
-über eventuell geladene Module, oder deren Voraussetzungen zu operieren.
-..................................
+----
+Dieses Modul stellt das sogenannte Observer-Pattern zur Verfügung, 
+das es uns ermöglicht interne Signale (Events) zu verschicken und zu verarbeiten. 
+Es ermöglicht dem Core komplett ohne das Wissen über eventuell geladene Module, 
+oder deren Voraussetzungen zu operieren.
+----
 
+Bei der Implementation wurde auf ein modulares Design wert gelegt. Der Server ist somit beliebig erweiterbar.
+Die Module werden in der Konfigurationsdatei hinterlegt, und vom Server zur Laufzeit geladen und initialisiert.
+
+_Es gibt hierbei zwei Arten von Modulen:_
+[horizontal]
+ConnectionProvider::
+  Der ConnectionProvider macht es möglich, den Core über beliebige Kommunikationswege zu verbinden,
+  wie zB TCP-Sockets oder Websockets. Selbst ausgefallene Möglichkeiten wie zB HTTP-Server Push wären 
+  denkbar.
+  
+Plugins::
+  Plugins sind eine Möglichkeit den Server um diverse Funktionalitäten zu erweitern wie z.B. einen Backlog
+  oder selbst ein Chat-Bot (maschineller User) sind möglich.
+  
+Es wäre denkbar selbst das Chat Protokoll als Modul zu implementieren, dies war jedoch im Rahmen des Projekts
+nicht möglich.
+
+MODUL BILD
+
+Signale
+~~~~~~~
+Signale und Callbacks werden von uns verwendet um Objekten eine Möglichkeit zu geben sich untereinander
+zu Verständigen, ohne jedoch zuviel vom eigentlichen Kommunikationsparten zuviel wissen zu müssen.
+Diese Technik ist auch als Observer-Pattern bekannt footnote:[http://de.wikipedia.org/wiki/Observer_(Entwurfsmuster)];.
+
+Als Ausgangspunkt wird von uns das auch dem CPAN nachinstallierte Modul Object::Event verwendet. Da dies aber keinerlei
+Möglichkeiten hatte zu testen ob ein bestimmtes Signal eigentlich existiert oder nicht, musste die Klasse noch erweitert
+werden. 
+
+Alle Objekte die Signale versenden wollen, müssen vom Objekt link:{pmsdocs}/files/Pms/Core/Object-pm.html[Pms::Core::Object] ableiten 
+und in einem globalen Hash *%pmsEvents* alle von ihm versendeten Signale hinterlegen:
+
+[source,perl]
+----
+#!/usr/bin/perl -w 
+
+package MyPackage;
+use Pms::Core::Object;
+use strict;
+use utf8;
+
+our @ISA = qw(Pms::Core::Object);
+
+our %PmsEvents = (
+  'signal1' => 1,
+  'signal2' => 1
+);
+----
+
+Diese Signale können mit beliebigen Callbacks verknüpft und es können auch mehrere Callbacks pro Signal registriert
+werden. Die Callbacks werden in der gleichen Reihenfolge aufgerufen, wie sie beim Sender-Objekt registriert werden.
+Es ist ausserdem möglich Argumente mit an die Callbacks zu übergeben.
+
+.Beispiel
+[source,perl]
+----
+#Code im Sender Objekt:
+sub anyOperation{
+  #aulösen des Signals:
+  $self->emitSignal('some_signal',"arg1","arg2");
+}
+
+#Code im Receiver Objekt:
+sub createConnections{
+  my $self = shift;
+  my $signalSender = shift;
+  
+  $signalSender->connect( 
+    some_signal => $self->_callback()
+  );
+}
+
+sub _callback{
+  my $self = shift;
+  return sub{
+    my $eventChain = shift; #Die Event Chain über die das Event abgebrochen werden kann
+    my $arg1 = shift;
+    my $arg2 = shift;
+    #do something
+  }
+}
+----
+
+Events
+~~~~~~
+Jedes Modul kann sich für bestimmte Server Events registrieren, es hinterlegt dabei eine Callback-Funktionen
+die beim auftreten dieses Events ausgeführt wird.
+Server Events sind hierbei nichts weiter als Signale die von der Application Klasse versendet werden, mit der 
+Besonderheit, das sie immer ein Event Objekt als ersten und einzigen Parameter mit schicken.
+
+.Beispiel
+[source,perl]
+----
+sub createConnections{
+  my $self = shift;
+  #Weist den Server an das Event client_connect_success mit dem Callback zu verbinden
+  $self->{m_parent}->connect( 
+    client_connect_success => $self->_callback()
+  );
+}
+
+sub _callback{
+  my $self = shift;
+  return sub{
+    my $eventChain = shift; #Die Event Chain über die das Event abgebrochen werden kann
+    my $eventType  = shift; #Das Event Objekt selbst ,das diverse Informationen enthält
+    
+    #Eine Message an den User schicken
+    $eventType->connection()->postMessage(
+      Pms::Prot::Messages::serverMessage("default","Hallo vom Callback")
+    );
+  }
+}
+----
+
+Folgende Events stehen zur Verfügung:
+
+[options="header"]
+|=======
+|Name                           | Beschreibung
+|client_connect_request         | Ein neuer Client versucht sich zu verbinden
+|client_connect_success         | Ein neuer Client hat eine Verbindung aufgebaut
+|client_disconnect_success      | Ein Client hat die Verbindung geschlossen
+|message_send_request           | Ein Client versucht eine Message zu senden
+|message_send_success           | Ein Client hat eine Message gesendet
+|join_channel_request           | Ein Client möchte einen Channel betreten
+|join_channel_success           | Ein Client hat einen Channel betreten
+|leave_channel_success          | Ein Client hat einen Channel verlassen
+|create_channel_request         | Ein Client möchte einen Channel erstellen
+|create_channel_success         | Ein Client hat einen Channel erstellt
+|channel_close_success          | Ein Channel wurde geschlossen
+|change_nick_request            | Ein Client versucht seinen Nickname zu ändern
+|change_nick_success            | Ein Client hat seinen Nickname geändert
+|change_topic_request           | Ein Client versucht ein Channel Topic zu ändern
+|change_topic_success           | Ein Client hat ein Channel Topic zu geänderd
+|execute_command_request        | Ein Client versucht ein Command auszuführen
+|=======
+
+Jedes Event, das über ein "_request" Postfix verfügt, kann in der Callback Funktion unter Angabe eines Grundes zurückgewiesen werden,
+die weitere Verarbeitung wird somit abgebrochen und der User bekommt eine entsprechende Meldung darüber.
+Hiermit wird es nicht nur ermöglicht, auf Events zu reagieren sondern diese sogar von ausserhalb des Cores zu steuern.
+Diese Funktionalität wird zum Beispiel im Security Modul verwendet um Userrechte zu überprüfen, allerdings könnte man damit auch 
+einfachere Wortfilter erstellen, die zB Messages mit Schimpfwörtern herausfiltern.
+
+.Zurückweisung eines Events im Callback
+[source,perl]
+----
+sub _callback{
+  my $self = shift;
+  return sub{
+    my $eventChain = shift; #Die Event Chain über die das Event abgebrochen werden kann
+    my $eventType  = shift; #Das Event Objekt selbst ,das diverse Informationen enthält
+    
+    #Setzt die Error Message die an den Client gesendet wird
+    $eventType->reject("Eine beliebige Error Message"); 
+    
+    #Stoppt das Event
+    $eventChain->stop_event;
+  }
+}
+----
 
 
