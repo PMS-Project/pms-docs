@@ -1,13 +1,12 @@
-P.M.S Perl - Messaging System
-=============================
+= P.M.S Perl - Messaging System =
 Benjamin Zeller, Lukas Michalski , Thorsten Schwalb
 v1.0, 2012-04
 :doctype: book
 :pmsdocs: file:///home/zbenjamin/workspace/pms-project/pms-docs/pms-server
 
 [preface]
-Einleitung
-----------
+== Einleitung ==
+
 Dieses Dokument beschreibt die Funktionsweise und Implementation
 des Perl Messaging Systems, also den Core-Server, die Erweiterung durch 
 Module, das Admin Interface und den Chat Client.
@@ -17,8 +16,8 @@ der Technikerausbildung im Schuljahr 2011/12 in der Klasse ITT7/8.
 Die Arbeiten an der Software wurden gemeinschaftlich von Lukas Michalsi,
 Benjamin Zeller und Thorsten Schwalb durchgeführt.
 
-Core-System
-~~~~~~~~~~~
+=== Core-System ===
+
 Das meisste Augenmerk lag hierbei auf dem Herzstück des PMS , dem Core.
 Die Hauptziele bei der Impementation des Cores waren wie folgt:
 
@@ -34,14 +33,14 @@ Die Hauptziele bei der Impementation des Cores waren wie folgt:
 Alle dieser Ziele wurden bis zum Projektende in die Tat umgesetzt und liegen
 in der aktuellen Softwareversion vor.
 
-Erweiterungs-Module
-~~~~~~~~~~~~~~~~~~~
+=== Erweiterungs-Module ===
+
 Die Erweiterungsmodule, sollen demonstrieren auf welche Weise es möglich ist 
 den P.M.S. Server zu erweitern. Vor allem das Security Modul ist hierbei 
 hervorzuheben, da es fast die komplette Palette der Möglichkeiten ausnutzt.
 
-HTML5 - Chat Client
-~~~~~~~~~~~~~~~~~~~
+=== HTML5 - Chat Client ===
+
 Der Chat Client ist die Referenzimplementation eines Clients, basierend auf
 einer Kombination von Html und Javascript.
 Die Hauptziele der Implementation waren wie folgt:
@@ -50,8 +49,8 @@ Die Hauptziele der Implementation waren wie folgt:
 . Die Möglichkeit in mehreren Channeln gleichzeitig chatten zu können
 . Moderne und ansprechende HTML5 basierte Oberfläche
 
-Admin-Interface
-~~~~~~~~~~~~~~~
+=== Admin-Interface ===
+
 Das Admin Interface wird benötigt, um auf die von Modulen bereitgestellten
 Daten zugreifen zu können, oder diese zu konfigurieren. Die Implementierung 
 erfolgte in Perl, Javascript und Html. 
@@ -64,16 +63,16 @@ erfolgte in Perl, Javascript und Html.
 - Observer Pattern
 //////////////////
 
-Implementation, Funktionsweise und Design des Core-Systems
-----------------------------------------------------------
+== Implementation, Funktionsweise und Design des Core-Systems ==
 
-Allgemein
-~~~~~~~~~
+=== Allgemein ===
+
 Die komplette Implementation des Cores erfolgte in Perl und wurde als reine 
-objektorienterte, eventbasierte Software konzipiert. Hierbei wurde folgende 
-Fremdsoftware verwendet:
+objektorienterte, eventbasierte Software konzipiert.
 
-- AnyEvent (6.14)
+==== Verwendete Fremdsoftware im Core: ====
+
+- link:http://search.cpan.org/~mlehmann/AnyEvent-6.14/[AnyEvent (6.14)]
 +
 ----
 Das AnyEvent Modul stellt den vom P.M.S. verwendeten Event-Loop
@@ -86,7 +85,7 @@ mitgeben, die nach erfolgreicher Fertigstellung des Befehls, oder sogar im Fehle
 aufgerufen werden.
 ----
 
-- Object::Event (1.23)
+- link:http://search.cpan.org/~elmex/Object-Event-1.23/lib/Object/Event.pm[Object::Event (1.23)]
 +
 ----
 Dieses Modul stellt das sogenannte Observer-Pattern zur Verfügung, 
@@ -114,10 +113,10 @@ nicht möglich.
 
 MODUL BILD
 
-Signale
-~~~~~~~
+=== Signale ===
+
 Signale und Callbacks werden von uns verwendet um Objekten eine Möglichkeit zu geben sich untereinander
-zu Verständigen, ohne jedoch zuviel vom eigentlichen Kommunikationsparten zuviel wissen zu müssen.
+zu Verständigen, ohne jedoch zuviel vom eigentlichen Kommunikationspartner wissen zu müssen.
 Diese Technik ist auch als Observer-Pattern bekannt footnote:[http://de.wikipedia.org/wiki/Observer_(Entwurfsmuster)];.
 
 Als Ausgangspunkt wird von uns das auch dem CPAN nachinstallierte Modul Object::Event verwendet. Da dies aber keinerlei
@@ -178,8 +177,12 @@ sub _callback{
 }
 ----
 
-Events
-~~~~~~
+Beim connecten der Signale, wir automatisch in der kompletten Hirarchie des Objekts nach der Definition
+eines Signals im PmsEvents Hash gesucht. Somit können auch Signale von übergeordneten Klassen verwendet 
+werden, ohne diese noch einmal im Hash angeben zu müssen.
+
+=== Events ===
+
 Jedes Modul kann sich für bestimmte Server Events registrieren, es hinterlegt dabei eine Callback-Funktionen
 die beim auftreten dieses Events ausgeführt wird.
 Server Events sind hierbei nichts weiter als Signale die von der Application Klasse versendet werden, mit der 
@@ -256,5 +259,144 @@ sub _callback{
   }
 }
 ----
+
+=== Konnektivitaet ===
+
+==== Allgemein ====
+
+Wie in der Einleitung schon kurz erwähnt, ist die komplette Kommunikation im Core modular aufgebaut. Hierfür sind zwei abstrakte Klassen
+im Core vorhanden, die die Implementationsdetails der jeweiligen Kommunikationsbackends "verstecken".
+
+- link:{pmsdocs}/files/Pms/Core/ConnectionProvider-pm.html[Pms::Core::ConnectionProvider]
++
+====
+Der ConnectionProvider ist die Abstrakte Form eines Server-Sockets, wie man ihn von der normalen 
+TCP Programmierung kennt: 
+Er nimmt Verbindungsversuche an und informiert den Server über ein Signal (connectionAvailable) darüber, 
+das neue Connections vorliegen. Hierbei wird komplett abstrahiert wie dieser Ablauf im Hintergrund funktioniert. 
+Ob dies nun ein HTTP Requst oder ein normaler TCP-Socket ist, ist für den Core komplett irrelevant.
+====
+  
+- link:{pmsdocs}/files/Pms/Core/Connection-pm.html[Pms::Core::Connection]
++
+====
+Die Connection Klasse hat zwei Aufgaben:
+
+  1. Sie abstrahiert die darunterliegende Kommunikation
+  2. Sie identifiziert den verbundenen User und weiss dessen Nicknamen
+
+Am besten kann man sich die Connection Klasse als einen Socket vorstellen, sie empfängt und schickt 
+Daten entweder synchron oder asynchron, je nachdem welche Funktion verwendet wurde.
+Auch hier ist das darunterliegende Protokoll irrelevant. Unter Zuhilfenahme einer SessionId und eines 
+Mailservers könnte man sogar, eine Kommunikation per EMail über diese Klasse realisieren.
+====
+
+Die verwendeten Backends werden über die Konfigurationsdatei festgelegt und zur Laufzeit geladen
+und initialisiert. 
+Standardmässig sollten sie im Packet Pms::Net untergebracht sein, können aber durch Verwendung des 
+FQN in der Konfigurationsdatei von überall geladen werden (solange sie sich im Include Pfad befinden)
+
+==== Backend Implementation Websocket ====
+
+Die Referenzimplementation des Backends ist auf dem WebSocket Protokoll aufgebaut,
+das es dem Server ermöglicht HTML5-WebSocket Connections entgegenzunehmen, somit kann jeder
+mit einem HTML5-fähigen Browser, ohne etwas installieren zu müssen, eine Verbindung zum 
+Chatserver aufbauen.
+
+[NOTE]
+====
+*NOTE* Bemerkung
+Im Rahmen der Projektarbeit, wurde nur der Chromium Browser getestet.
+====
+
+===== Verwendete Fremdsoftware =====
+
+- link:http://search.cpan.org/~vti/Protocol-WebSocket-0.00906/lib/Protocol/WebSocket.pm[Protocol::WebSocket (0.00906)]
++
+----
+Ein aus dem CPAN installiertes Modul, implementiert das Websocket Protokoll.
+Hierbei wird ein einfacher HTTP-Handshake an den Server gesendet:
+
+GET /chat HTTP/1.1
+Host: server.example.com
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+Origin: http://example.com
+Sec-WebSocket-Protocol: chat, superchat
+Sec-WebSocket-Version: 13
+
+Der Server antwortet dementsprechend und wechselt von der HTTP
+in die Socket Kommunikation. Danach kann man die Verbindung wie eine 
+normale TCP Verbindung verwenden.
+
+Weiterführende Informationen:
+http://de.wikipedia.org/wiki/WebSocket
+----
+
+===== Line Protokoll =====
+
+Da man, wie bei jeder Stream basierten Verbindung (wie zB Tcp oder Websocket), nicht weiss wann eine Nachricht komplett
+angekommen ist oder ob man noch auf Daten warten muss, braucht man ein Protokoll das einem hilft Anfang und
+Ende der Nachrichten zu erkennen. 
+Hierbei haben wir uns für Netstring, ein einfaches Textbasiertes Protokoll entschieden. Eine Nachricht im Netstring
+Format hat diese Darstellung:
+
+****
+[red]#16# [green]#:# Das ist ein Text [green]#,#
+****
+
+Die Zahl am Beginn der Nachricht, beschreibt wieviel *Zeichen* sich zwischen dem beiden Delimitern : und , befinden.
+Hierbei ist vollkommen egal welche Zeichen, sogar ein weiterer Netstring könnte eingebettet werden oder sogar binäre Daten.
+Letzteres ist aber aufgrund von Einschränkungen durch das WebSocket Protokoll nicht möglich, da dies nur UTF-8 Character 
+zulässt.
+Nun ist es ein leichtes für den Server zu erkennen wann eine Nachricht endet und wann er noch warten muss:
+
+FLOWCHART Netstring
+
+Weitere Informationen zu Netstring, findet man in der offiziellen Dokumentation:
+http://cr.yp.to/proto/netstrings.txt
+
+==== Chat und Message Protokoll ====
+
+Damit Client und Server richtig miteinander kommunizieren können, haben wir
+ein Chatprotokoll festgelegt, und einen eigenen handgeschriebenen Parser dafür
+entwickelt.
+Die Implementierung befindet sich im link:{pmsdocs}/files/Pms/Prot/Parser-pm.html[Pms::Prot::Parser] Modul.
+
+Der Aufbau einer Message hat immer den gleichen Aufbau:
+****
+/command "Hallo ich bin ein String" 12345 
+****
+
+Folgende Regeln müssen zutreffen:
+
+- Eine Message startet immer mit einem /
+- Nach dem / muss sich ein Token befinden (Kommandoname), 
+- Ein Token startet immer mit einem Buchstaben und kann nur
+  aus Buchstaben und Zahlen bestehen
+- Alle Argumente sind duch Leerzeichen getrennt
+- Ein Argument kann entweder ein String oder eine Nummer sein
+- Ein String startet entweder mit einem " oder einem ' , das gleiche
+  Zeichen muss verwendet werden um den String zu beenden
+- Kommt das Escape Zeichen im String noch einmal vor muss es mit 
+  einem \ escaped werden.
+- Eine Nummer kann mit folgenden Zeichen beginnen:  +,-,. oder einer Nummer
+
+Wenn der Parser keinen Fehler findet, wird er einen Hash zurückgeben der 
+den Kommandonamen (das Token nach dem /) und die Argumente als Array 
+beinhält.
+
+=== Das Server Object ===
+
+Das Herzstück, das link:[Pms::Application] Modul verbindet die bisher
+beschriebenen Funktionalitäten miteinander. Es sorgt dafür, das die ConnectionProvider
+und Module geladen und initialisiert werden. Und stellt eine API für die Module bereit
+um mit dem Server zu interagieren.
+
+Der Server ist ausserdem dafür zuständig, die einzelnen Connections anzunehmen und
+zu verwalten, 
+
+
 
 
