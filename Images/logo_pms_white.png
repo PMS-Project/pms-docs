@@ -1,0 +1,158 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+          "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  
+<meta http-equiv="X-UA-Compatible" content="chrome=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>images/logo_pms_white.png - pms-webclient-qx in PMS - Gitorious</title>
+<link href="/stylesheets/gts-common.css?1330697323" media="screen" rel="stylesheet" type="text/css" />
+<link href="//fonts.googleapis.com/css?family=Nobile&amp;v1" type="text/css" rel="stylesheet">
+
+<script src="/javascripts/all.js?1330697380" type="text/javascript"></script>      <link href="/stylesheets/prettify/prettify.css?1330697323" media="screen" rel="stylesheet" type="text/css" />    <script src="/javascripts/lib/prettify.js?1330697323" type="text/javascript"></script>      <!--[if IE 8]><link rel="stylesheet" href="/stylesheets/ie8.css" type="text/css"><![endif]-->
+<!--[if IE 7]><link rel="stylesheet" href="/stylesheets/ie7.css" type="text/css"><![endif]-->
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-52238-3']);
+_gaq.push(['_setDomainName', '.gitorious.org'])
+_gaq.push(['_trackPageview']);
+(function() {
+   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+   ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+})();
+</script>
+</head>
+<body id="blobs">
+  <div id="wrapper">
+        <ul id="user-nav">
+      <li><a href="/">Dashboard</a></li>
+      
+    <li class="secondary"><a href="/~thorstensch">~thorstensch</a></li>
+  <li class="secondary messages unread">
+          <a href="/messages">1</a>      </li>
+  <li class="secondary subtle"><a href="/logout">Logout</a></li>
+    </ul>
+    <div id="header">
+      <h1 id="logo">
+        <a href="/"><img alt="Logo" src="/img/logo.png?1294322727" /></a>
+      </h1>
+      <ul id="menu">
+                  <li class="activity"><a href="/activities">Activities</a></li>
+          <li class="projects"><a href="/projects">Projects</a></li>
+          <li class="teams"><a href="/teams">Teams</a></li>
+              </ul>
+    </div>
+    <div id="top-bar">
+      <ul id="breadcrumbs">
+        <li class="project"><a href="/p-ms">PMS</a></li><li class="repository"><a href="/p-ms/pms-webclient-qx">pms-webclient-qx</a></li><li class="branch"><a href="/p-ms/pms-webclient-qx/commits/master">master</a></li><li class="tree"><a href="/p-ms/pms-webclient-qx/trees/master">/</a></li><li class="folder"><a href="/p-ms/pms-webclient-qx/trees/master/images">images</a></li><li class="file"><a href="/p-ms/pms-webclient-qx/blobs/master/images/logo_pms_white.png">logo_pms_white.png</a></li>      </ul>
+              <div id="searchbox">
+          
+
+
+<div class="search_bar">
+<form action="https://gitorious.org/search" method="get"><p>
+  <input class="text search-field round-5" id="q" name="q" type="text" /> 
+  <input type="submit" value="Search" class="search-submit round-5" />
+</p>  
+<p class="hint search-hint" style="display: none;">
+  eg. 'wrapper', 'category:python' or '"document database"'
+  </p>
+</form></div>
+        </div>
+          </div>
+    <div id="container" class="">
+      <div id="content" class="">
+        
+        
+
+
+
+<div class="page-meta">
+  <ul class="page-actions">
+    <li>Blob contents</li>
+    <li><a href="/p-ms/pms-webclient-qx/blobs/blame/06a891611eb46fb6f75e8d26200b3bb42c2f4931/images/logo_pms_white.png" class="blame js-pjax" data-pjax="#codeblob">Blame</a></li>
+    <li><a href="/p-ms/pms-webclient-qx/blobs/history/master/images/logo_pms_white.png" class="js-pjax" data-pjax="#codeblob">Blob history</a></li>
+    <li><a href="/p-ms/pms-webclient-qx/blobs/raw/master/images/logo_pms_white.png">Raw blob data</a></li>
+  </ul>
+</div>
+
+
+
+<!-- mime: image/png -->
+
+      <img alt="Logo_pms_white" src="/p-ms/pms-webclient-qx/blobs/raw/06a891611eb46fb6f75e8d26200b3bb42c2f4931/images/logo_pms_white.png" />  
+<script type="text/javascript" charset="utf-8">
+  (function () {
+      if ($("#codeblob tr td.line-numbers:last").text().length < 3500) {
+          prettyPrint();
+      } else {
+          $("#long-file").show().find("a#highlight-anyway").click(function(e){
+              prettyPrint();
+              e.preventDefault();
+          });
+      }
+  }());
+</script>
+
+      </div>
+          </div>
+    <div id="footer">
+      
+<div class="powered-by">
+  <a href="http://gitorious.org"><img alt="Poweredby" src="/images/../img/poweredby.png?1294322727" title="Powered by Gitorious" /></a></div>
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-52238-3']);
+_gaq.push(['_setDomainName', '.gitorious.org'])
+_gaq.push(['_trackPageview']);
+(function() {
+   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+   ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+})();
+</script><script src="/javascripts/onload.js?1330697323" type="text/javascript"></script>
+      
+<div id="footer-links">
+  <h3>Gitorious</h3>
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/about/faq">FAQ</a></li>
+    <li><a href="/contact">Contact</a></li>
+  </ul>
+  
+    <ul>
+      <li><a href="http://groups.google.com/group/gitorious">Discussion group</a></li>
+      <li><a href="http://blog.gitorious.org">Blog</a></li>
+    </ul>
+  
+      
+<ul>
+  <li><a href="http://en.gitorious.org/tos">Terms of Service</a></li>
+  <li><a href="http://en.gitorious.org/privacy_policy">Privacy Policy</a></li>
+</ul>
+
+  
+  
+    <ul>
+      
+        <li><a href="http://gitorious.com/">Professional Gitorious Services</a></li>
+      
+    </ul>
+  
+</div>
+      <p class="footer-blurb">
+  
+    <a href="http://gitorious.com">Professional Gitorious services</a> - Git
+    hosting at your company, custom features, support and more.
+    <a href="http://gitorious.com">gitorious.com</a>.
+  
+</p>
+
+      <div class="clear"></div>
+    </div>
+  </div>
+</body>
+</html>
