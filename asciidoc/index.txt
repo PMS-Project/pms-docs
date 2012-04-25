@@ -506,7 +506,7 @@ hinterlegt wurde, und führt es aus. Als Parameter für den Callback wird immer
 als erstes Argument das Connection Objekt übergeben, das das Kommando ausführt, 
 danach das Array mit den Argumenten aus dem Hash. 
 
-===== Default Messages/Kommandos =====
+===== User-Schnittstelle (Kommandos) =====
 
 Der Core Server kommt von Haus aus mit einigen vordefinierten Kommandos:
 
@@ -681,7 +681,7 @@ Um in einen persistenten Channel betreten zu können benötigt ein User extra Re
 hier wird kein standard Regelpacket erzeugt, hat der User keine Rechte für diesen 
 Channel in der Datenbank ist es auch nicht möglich den Channel zu betreten.
 
-=== Messages / Kommandos ===
+=== User-Schnittstelle (Kommandos) ===
 
 - */identify "username" "password"* +
   Identifiziert den User beim Security Modul, die globalen 
