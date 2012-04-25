@@ -2,7 +2,7 @@
 Benjamin Zeller, Lukas Michalski , Thorsten Schwalb
 :doctype: book
 :toc:
-:pmsdocs: file:///home/zbenjamin/workspace/pms-project/pms-docs/pms-server
+:pmsdocs: http://pms.muhla-solutions.de/docs/server
 
 [preface]
 == Einleitung ==
@@ -13,13 +13,14 @@ Module, das Admin Interface und den Chat Client.
 Die Implementation und Entwicklung dieser Software erfolgte im Rahmen 
 der Technikerausbildung im Schuljahr 2011/12 in der Klasse ITT7/8.
 
-Die Arbeiten an der Software wurden gemeinschaftlich von Lukas Michalsi,
+Die Arbeiten an der Software wurden gemeinschaftlich von Lukas Michalski,
 Benjamin Zeller und Thorsten Schwalb durchgeführt.
 
-=== Core-System ===
+=== Zielsetzung Core-System ===
 
 Das meisste Augenmerk lag hierbei auf dem Herzstück des PMS , dem Core.
-Die Hauptziele bei der Impementation des Cores waren wie folgt:
+
+*Die Hauptziele bei der Impementation des Cores waren wie folgt:*
 
 . Implementation eines Multi-Channel Multi-User Chatservers
 . Quasi parallele Verarbeitung mehrerer Connections
@@ -30,31 +31,100 @@ Die Hauptziele bei der Impementation des Cores waren wie folgt:
 . Implementation eines einfachen Chatprotokolls
 . Möglichst lose Objektkopplung zwischen den Plugins und dem Core
 
-Alle dieser Ziele wurden bis zum Projektende in die Tat umgesetzt und liegen
-in der aktuellen Softwareversion vor.
+*Alle dieser Ziele wurden bis zum Projektende in die Tat umgesetzt und liegen
+in der aktuellen Softwareversion vor.*
 
-=== Erweiterungs-Module ===
+=== Zielsetzung Erweiterungs-Module ===
 
-Die Erweiterungsmodule, sollen demonstrieren auf welche Weise es möglich ist 
-den P.M.S. Server zu erweitern. Vor allem das Security Modul ist hierbei 
-hervorzuheben, da es fast die komplette Palette der Möglichkeiten ausnutzt.
+Es sollten mehrere Erweiterungsmodule entwickelt werden um zu demonstrieren 
+auf welche Weise es möglich ist den P.M.S. Server zu erweitern. 
+Vor allem das Security Modul ist hierbei hervorzuheben, 
+da es fast die komplette Palette der Möglichkeiten ausnutzt.
 
-=== HTML5 - Chat Client ===
+*Die Ziele waren wie folgt:*
+
+. Security 
++
+  Rechteverwaltungssystem und registrierte User,
+  einteilung der User in Gruppen und zuweisung von Rechten
+  an die Gruppen
+  
+. Statistik Modul
++
+  Statistiken zB über die Aufenthaltsdauer eines 
+  Users, wieviele Messages er schreibt usw.
+  
+. Backlog Modul
++
+  Die Messages eines Channels werden in der Datenbank hinterlegt
+  und werden an einen User gesendet der den Channel betritt, damit
+  dieser weiss was vorher gesprochen wurde.
+  
+*Im Rahmen des Projekts wurden die Ziele wie folgt umgesetzt:*
+
+. Security Modul
++
+  Bis auf die Möglichkeit Gruppen anuzlegen und zu verwalten
+  wurde das Modul vollständig umgesetzt
+  
+. Backlog Modul
++
+  Wurde komplett umgesetzt
+  
+. Statistik Modul
++
+  Konnte im Zeitrahmen des Projektes nicht umgesetzt werden
+  
+  
+=== Zielsetzung HTML5 - Chat Client ===
 
 Der Chat Client ist die Referenzimplementation eines Clients, basierend auf
 einer Kombination von Html und Javascript.
-Die Hauptziele der Implementation waren wie folgt:
+
+*Die Ziele waren wie folgt:*
 
 . Komplette Referenzimplementation des P.M.S. Chatprotokolls
 . Die Möglichkeit in mehreren Channeln gleichzeitig chatten zu können
 . Moderne und ansprechende HTML5 basierte Oberfläche
 
-=== Admin-Interface ===
+*Alle dieser Ziele wurden bis zum Projektende in die Tat umgesetzt und liegen
+in der aktuellen Softwareversion vor.*
+
+=== Zielsetzung Admin-Interface ===
 
 Das Admin Interface wird benötigt, um auf die von Modulen bereitgestellten
 Daten zugreifen zu können, oder diese zu konfigurieren. Die Implementierung 
 erfolgte in Perl, Javascript und Html. 
 
+*Die Ziele waren wie folgt:*
+
+. HTML und Javascript basierte Oberfläche
+. Modularer Aufbau 
+. Chatserver Security Modul Verwaltung
+. Chatserver Backlog Modul Verwaltung
+. Chatserver Statistik Modul Verwaltung
+
+*Im Rahmen des Projekts wurden die Ziele wie folgt umgesetzt:*
+
+. HTML und Javascript basierte Oberfläche
++
+  Komplett implementiert
+  
+. Modularer Aufbau 
++
+  Wurde erfolgreich verwirklicht
+  
+. Chatserver Security Modul Verwaltung
++
+  Bis auf die Gruppenverwaltung implementiert
+  
+. Chatserver Backlog Modul Verwaltung
++
+  Konnte im Zeitrahmen des Projektes nicht umgesetzt werden 
+  
+. Chatserver Statistik Modul Verwaltung
++
+  Konnte im Zeitrahmen des Projektes nicht umgesetzt werden
 
 == Implementation, Funktionsweise und Design des Core-Systems ==
 
@@ -65,6 +135,26 @@ objektorienterte, eventbasierte Software konzipiert.
 Der Core ist die zentrale Einheit des P.M.S. es benötigt bis auf
 einen ConnectionProvider keine Erweiterungsmodule um eine Basis Chat Funktionalität
 zu Verfügung zu stellen. 
+
+Bei der Implementation wurde auf ein modulares Design wert gelegt. Der Server ist somit beliebig erweiterbar.
+Die Module werden in der Konfigurationsdatei hinterlegt, und vom Server zur Laufzeit geladen und initialisiert.
+
+_Es gibt hierbei zwei Arten von Modulen:_
+[horizontal]
+ConnectionProvider::
+  Der ConnectionProvider macht es möglich, den Core über beliebige Kommunikationswege zu verbinden,
+  wie zB TCP-Sockets oder Websockets. Selbst ausgefallene Möglichkeiten wie zB HTTP-Server Push wären 
+  denkbar.
+  
+Plugins::
+  Plugins sind eine Möglichkeit den Server um diverse Funktionalitäten zu erweitern wie z.B. einen Backlog
+  oder selbst ein Chat-Bot (maschineller User) sind möglich.
+  
+Es wäre denkbar selbst das Chat Protokoll als Modul zu implementieren, dies war jedoch im Rahmen des Projekts
+nicht möglich.
+
+MODUL BILD
+
 
 ==== Verwendete Fremdsoftware im Core ====
 
@@ -90,30 +180,13 @@ Es ermöglicht dem Core komplett ohne das Wissen über eventuell geladene Module
 oder deren Voraussetzungen zu operieren.
 ----
 
-Bei der Implementation wurde auf ein modulares Design wert gelegt. Der Server ist somit beliebig erweiterbar.
-Die Module werden in der Konfigurationsdatei hinterlegt, und vom Server zur Laufzeit geladen und initialisiert.
+=== Interne Schnittstellen ===
 
-_Es gibt hierbei zwei Arten von Modulen:_
-[horizontal]
-ConnectionProvider::
-  Der ConnectionProvider macht es möglich, den Core über beliebige Kommunikationswege zu verbinden,
-  wie zB TCP-Sockets oder Websockets. Selbst ausgefallene Möglichkeiten wie zB HTTP-Server Push wären 
-  denkbar.
-  
-Plugins::
-  Plugins sind eine Möglichkeit den Server um diverse Funktionalitäten zu erweitern wie z.B. einen Backlog
-  oder selbst ein Chat-Bot (maschineller User) sind möglich.
-  
-Es wäre denkbar selbst das Chat Protokoll als Modul zu implementieren, dies war jedoch im Rahmen des Projekts
-nicht möglich.
-
-MODUL BILD
-
-=== Signale ===
+==== Signale ====
 
 Signale und Callbacks werden von uns verwendet um Objekten eine Möglichkeit zu geben sich untereinander
 zu Verständigen, ohne jedoch zuviel vom eigentlichen Kommunikationspartner wissen zu müssen.
-Diese Technik ist auch als Observer-Pattern bekannt footnote:[http://de.wikipedia.org/wiki/Observer_(Entwurfsmuster)];.
+Diese Schnittstellen-Technik ist auch als Observer-Pattern bekannt footnote:[http://de.wikipedia.org/wiki/Observer_(Entwurfsmuster)];.
 
 Als Ausgangspunkt wird von uns das auch dem CPAN nachinstallierte Modul Object::Event verwendet. Da dies aber keinerlei
 Möglichkeiten hatte zu testen ob ein bestimmtes Signal eigentlich existiert oder nicht, musste die Klasse noch erweitert
@@ -178,7 +251,7 @@ eines Signals im PmsEvents Hash gesucht. Somit können auch Signale von übergeo
 werden, ohne diese noch einmal im Hash angeben zu müssen.
 
 [[CHAP_EVENTS]]
-=== Events ===
+==== Events ====
 
 Jedes Modul kann sich für bestimmte Server Events registrieren, es hinterlegt dabei eine Callback-Funktionen
 die beim auftreten dieses Events ausgeführt wird.
@@ -257,7 +330,7 @@ sub _callback{
 }
 ----
 
-=== Konnektivit&auml;t ===
+=== Externe Schnittstellen ===
 
 ==== Allgemein ====
 
@@ -295,7 +368,7 @@ FQN in der Konfigurationsdatei von überall geladen werden (solange sie sich im 
 
 ==== Backend Implementation Websocket ====
 
-Die Referenzimplementation des Backends ist auf dem WebSocket Protokoll aufgebaut,
+Die Referenzimplementation des Backends ist auf dem Modul AnyEvent::Handle und dem WebSocket Protokoll aufgebaut,
 das es dem Server ermöglicht HTML5-WebSocket Connections entgegenzunehmen, somit kann jeder
 mit einem HTML5-fähigen Browser, ohne etwas installieren zu müssen, eine Verbindung zum 
 Chatserver aufbauen.
@@ -306,6 +379,22 @@ Im Rahmen der Projektarbeit, wurde nur der Chromium Browser getestet.
 ====
 
 ===== Verwendete Fremdsoftware =====
+
+- link:http://search.cpan.org/~mlehmann/AnyEvent-6.14/lib/AnyEvent/Handle.pm[AnyEvent::Handle]
++
+----
+Ein Teil des AnyEvent Frameworks, das es ermöglicht Socket Handles mit unserer asynchronen
+Programmierung zu verbinden. Anstatt in einem blockierenden System-Call auf neue Daten 
+zu warten, führt der EventLoop unsere Callbacks aus wenn neue Daten ankommen.
+----
+
+- link:http://search.cpan.org/~mlehmann/AnyEvent-6.14/lib/AnyEvent/Socket.pm[AnyEvent::Socket]
++
+----
+Ein Teil des AnyEvent Frameworks, das es ermöglicht einen TCP-Server mit unserer asynchronen
+Programmierung zu verbinden. Anstatt in einem blockierenden System-Call auf neue Verbindungen 
+zu warten, führt der EventLoop unsere Callbacks aus wenn neue Daten ankommen.
+----
 
 - link:http://search.cpan.org/~vti/Protocol-WebSocket-0.00906/lib/Protocol/WebSocket.pm[Protocol::WebSocket (0.00906)]
 +
@@ -607,10 +696,15 @@ Channel in der Datenbank ist es auch nicht möglich den Channel zu betreten.
 == Administrations-Interface ==
 
 === Allgemein ===
+
 Um die Module und deren Einstellungen ,wie zB die Rechte des Security Moduls, zu verwalten
 wurde ein Webinterface auf Basis von Html, Javascript und Perl-CGI Programmierung entwickelt.
 Als Datenbankbackend kommt natürlich MySQL zum Einsatz.
 
+=== Aufbau des Source Codes ===
+
+image:source-tree.png["Ordner Struktur"]
+    
 === Fremdsoftware ===
 
 - link:[JSON (2.53) und JSON::XS (2.27)]
