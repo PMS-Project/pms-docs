@@ -66,7 +66,7 @@ Der Core ist die zentrale Einheit des P.M.S. es benötigt bis auf
 einen ConnectionProvider keine Erweiterungsmodule um eine Basis Chat Funktionalität
 zu Verfügung zu stellen. 
 
-==== Verwendete Fremdsoftware im Core: ====
+==== Verwendete Fremdsoftware im Core ====
 
 - link:http://search.cpan.org/~mlehmann/AnyEvent-6.14/[AnyEvent (6.14)]
 +
@@ -539,3 +539,185 @@ sub shutdown{
 <2> Der Konfigurationshash des Moduls
 <3> Registrierung des *ping* Kommandos im Server
 <4> Callback Funktion für das *ping* Kommando
+
+== Security Module ==
+
+=== Allgemein ===
+
+Um eine sinnvolle Anbindung an eine Datenbank und die Chatfunktion um
+Rechte zu erweitern wurde das Security Modul entwickelt.
+Das Security Modul führt zwei Arten von Rechten ein:
+
+1. Globale Rechte
++
+  Diese Art von Rechten legt fest ob ein User z.B. einen Channel erstellen, 
+  oder einen Channel löschen kann (das löschen wurde nicht mehr implementiert).
+  Also Aktionen ausserhalb der Channel.
+  
+2. Channel Rechte  
++
+  Hier wird festgelegt welche Rechte ein User in einem bestimmten Channel hat.
+  Es gibt pro User und Channel ein eigenes Rechtepacket, oder falls nichts in 
+  der Datenbank hinterlegt ist wird ,je nach Art des Channels, ein Default Packet erstellt.
+
+=== Verwendete Fremdsoftware ===
+
+- link:http://search.cpan.org/~mlehmann/AnyEvent-DBI-2.1/DBI.pm[AnyEvent::DBI]
++
+  Ein aus dem CPAN installiertes Modul. Es ermöglicht eine Asynchrone Verbindung
+  zur Datenbank aufzubauen. Datenbankoperationen die sehr lange dauern,
+  können so nicht den Mainloop blockieren und der Server kann eingehende        
+  Events schneller verarbeiten.
+  Da Perl echte Threads fehlen, startet das AynEvent::DBI Modul kleine Hilfsprozesse,
+  die die Queries entgegennehmen und ausführen, ist die Datenbankoperation fertig
+  wird im Hauptprogramm ein mitgegebenes Callback ausgeführt.
+  
+=== Funktionsweise ===
+
+Das Security Modul nützt alle Möglichkeiten des Core Servers um ihn zu erweitern.
+Es registriert diverse Befehle und behandelt fast alle Events die der Server
+schickt. 
+Nachdem ein User erfolgreiche eine Verbindung zum Server aufgebaut hat,
+bekommt er ein Standard Rechtepacket zugewiesen, das es ihm möglich macht
+eigene Channels zu erstellen.
+Hat er einen Channel erstellt, ist er dort Channel-Admin solange er den Channel 
+nicht verlässt, er hat in diesem Channel alle Rechte.
+User die den Channel nur betreten, bekommen ein Standard Channel Rechtepacket, 
+sie dürfen den Channel standardmässig betreten und darin sprechen.
+
+Das Security Modul führt aber noch eine weitere Art von Channels ein, sogenannte
+persistente Channel. Diese sind in der Datenbank hinterlegt und werden beim starten
+des Servers automatisch erzeugt. 
+Um in einen persistenten Channel betreten zu können benötigt ein User extra Rechte,
+hier wird kein standard Regelpacket erzeugt, hat der User keine Rechte für diesen 
+Channel in der Datenbank ist es auch nicht möglich den Channel zu betreten.
+
+=== Messages / Kommandos ===
+
+- */identify "username" "password"* +
+  Identifiziert den User beim Security Modul, die globalen 
+  Rechte des Users werden aus der DB geladen
+- */giveOp "channel" "username"* +
+  Ein Channeladministrator, hat die Möglichkeit einem 
+  anderen User im Channel Administratorenrechte zu geben
+- */takeOp "channel" "username"* +
+  Einen Channeladministrator kann Admin Rechte eines anderen Users
+  entfernen
+  
+== Administrations-Interface ==
+
+=== Allgemein ===
+Um die Module und deren Einstellungen ,wie zB die Rechte des Security Moduls, zu verwalten
+wurde ein Webinterface auf Basis von Html, Javascript und Perl-CGI Programmierung entwickelt.
+Als Datenbankbackend kommt natürlich MySQL zum Einsatz.
+
+=== Fremdsoftware ===
+
+- link:[JSON (2.53) und JSON::XS (2.27)]
++
+  Aus dem CPAN nachinstallierte Module, sie stellen einen Parser und Serializer
+  für JSON Dokumente bereit. JSON ist ein leichtgewichtiges Datentransferformat, 
+  das das Webinterface verwendet um Daten per AJAX vom Server abzuholen.
+  
+- link:[HTML::Template]  
++
+  Aus dem CPAN nachinstalliertes Modul, es ermöglicht die strikte Trennung von HTML
+  und Perl Code. Zu diesem Zweck wird der HTML Code in sogenannte Template Dateien 
+  ausgelagert, in denen bestimmte "Tags" hinterlegt sind. Diese "Tags" kann man 
+  durch dynamische Daten ersetzen.
+  
+- link:http://jquery.com/[JQuery]
++
+  JQuery ist ein Javascript Framework, das es einfach macht Browserübergreifendes
+  Javascript zu schreiben, in unserer Software kommmt es hautpsächlich bei 
+  AJAX-Datenabfragen und beim dymamischen ändern des DOM-Trees zum Einsatz.
+  
+- link:http://twitter.github.com/bootstrap/[Twitter Bootstrap]  
++
+  Bootstrap ist ein Html, Css und Javascript Framework, das vordefinierte Elemente 
+  liefert, um das Styling und Erstellen von HTML basierten Interfaces zu erleichtern.
+  Die komplette Ui des Admin Interfaces wurde mit Bootstrap erstellt.
+  
+=== Implementation und Design ===
+Auch das Admin Interface ist wie der Server modular aufgebaut. Server Module, die 
+eine Konfiguration benötigen, die über die Fähigkeiten einer Konfigurationsdatei 
+hinausgehen, müssen nur ein Modul/Plugin für das Admin Interface liefern und einige
+bestimmte API Vorgaben erfüllen.
+
+==== Application Entry Scripts ====
+Es gibt insgesamt nur 4 Skripte, die der HTTP-Server direkt ausführen kann,
+diese leiten die Requests dann an interne Module weiter oder bearbeiten sie
+direkt selbst:
+
+- *login.pl*
++
+  Ist für Login und das erstellen der Session zuständig, gibt 
+  es schon eine bestehende Session, wird der Client auf das index.pl
+  Script umgeleitet.
+  
+- *index.pl*
++
+  Zeigt die Startseite und das Menu an.
+  
+- *module.pl*
++
+  Dieses Skript behandelt Requests an die Module -> s.a. Module Funktionsweise
+  
+- *users.pl*  
++
+  Ist dafür zuständig neue Admin User über die Oberfläche anzulegen und zu verwalten.
+  
+==== Funktionsweise von Modulen ====
+
+Wie schon im vorherigen Abschnitt erwähnt, werden Requests an die Module
+von Application-Entry Skript module.pl gesteuert.
+Hierbei wird vorausgesetzt, das es ein Module gibt das folgende
+Voraussetzungen erfüllt:
+
+- Ein Modul im Verzeichnis Pms/Modules/<PluginName> mit dem Namen Mod.pm
++
+  Für das Security Modul würde das bedeuten: Pms/Modules/Security/Mod.pm
+  
+- Dieses Module implementiert die Basisklasse Pms::BaseModule
+- Es wurden alle abstrakten Funktionen implementiert.
+
+Für genauere Informationen wie ein Modul implementiert wird, beachten
+Sie bitte die API Dokumentation.
+
+Es gibt zwei Arten von Requests an ein Modul:
+1. Die Anforderung einer neuen HTML-Seite, also eine View
+2. Ein Datenrequest das per AJAX geschickt wird.
+
+Welche Art von Request durchgeführt wird und an welches Modul 
+es geschickt wird, wird per GET Daten in der URL entschieden:
+
+.URL für eine View
+----
+http://hostname/module.pl?mod=<ModuleName>;view=<ViewName>
+----
+
+Wie man im Beispiel erkennen kann, wird über die *mod* Variable
+die Bezeichnung des Moduls an das module.pl Skript übergeben,
+dieses versucht dann zur Laufzeit das Modul zu laden und
+ruft die Funktion *renderContent($viewName)* auf.
+Diese Funktion sollte den Inhalt der HTML Seite zurückgeben, dieser
+Inhalt wird dann in den Datenbereich des Haupt-Templates eingebettet.
+
+.URL für einen Daten Request
+----
+http://hostname/module.pl?mod=<ModuleName>;action=<ActionName>
+----
+
+Die Url für einen Daten-Request ist im Aufbau der View-Request 
+ähnlich, allerdings hat sie anstatt dem *view* Parameter, einen 
+*action* Parameter. 
+Das Skript module.pl lädt das Plugin in der gleichen Weise wie 
+bei der View, führt hier jedoch die Funktion *dataRequest($actionName)*
+aus. Daten, die an die dataRequest Funktion selbst übergeben werden,
+müssen als JSON-Dokument per POST Request übergeben werden.
+In der aktuellen Konfiguration werden unbekannte GET-Parameter
+einfach ignoriert.
+  
+  
+  
+  
