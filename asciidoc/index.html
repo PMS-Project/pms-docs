@@ -1,0 +1,1799 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.6.7" />
+<title>P.M.S Perl - Messaging System</title>
+<style type="text/css">
+/* Shared CSS for AsciiDoc xhtml11 and html5 backends */
+
+/* Default font. */
+body {
+  font-family: Georgia,serif;
+}
+
+/* Title font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+#toctitle,
+#author, #revnumber, #revdate, #revremark,
+#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+h5 {
+  font-size: 1.0em;
+}
+
+div.sectionbody {
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
+
+pre {
+  padding: 0;
+  margin: 0;
+}
+
+#author {
+  color: #527bbd;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+#email {
+}
+#revnumber, #revdate, #revremark {
+}
+
+#footer {
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #f0f0f0;
+  color: #888;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
+
+@media print {
+  #footer-badges { display: none; }
+}
+
+#toc {
+  margin-bottom: 2.5em;
+}
+
+#toctitle {
+  color: #527bbd;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel0, div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+
+span.aqua { color: aqua; }
+span.black { color: black; }
+span.blue { color: blue; }
+span.fuchsia { color: fuchsia; }
+span.gray { color: gray; }
+span.green { color: green; }
+span.lime { color: lime; }
+span.maroon { color: maroon; }
+span.navy { color: navy; }
+span.olive { color: olive; }
+span.purple { color: purple; }
+span.red { color: red; }
+span.silver { color: silver; }
+span.teal { color: teal; }
+span.white { color: white; }
+span.yellow { color: yellow; }
+
+span.aqua-background { background: aqua; }
+span.black-background { background: black; }
+span.blue-background { background: blue; }
+span.fuchsia-background { background: fuchsia; }
+span.gray-background { background: gray; }
+span.green-background { background: green; }
+span.lime-background { background: lime; }
+span.maroon-background { background: maroon; }
+span.navy-background { background: navy; }
+span.olive-background { background: olive; }
+span.purple-background { background: purple; }
+span.red-background { background: red; }
+span.silver-background { background: silver; }
+span.teal-background { background: teal; }
+span.white-background { background: white; }
+span.yellow-background { background: yellow; }
+
+span.big { font-size: 2em; }
+span.small { font-size: 0.6em; }
+
+span.underline { text-decoration: underline; }
+span.overline { text-decoration: overline; }
+span.line-through { text-decoration: line-through; }
+
+div.unbreakable { page-break-inside: avoid; }
+
+
+/*
+ * xhtml11 specific
+ *
+ * */
+
+tt {
+  font-family: "Courier New", Courier, monospace;
+  font-size: inherit;
+  color: navy;
+}
+
+div.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overriden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+/*
+ * html5 specific
+ *
+ * */
+
+.monospaced {
+  font-family: "Courier New", Courier, monospace;
+  font-size: inherit;
+  color: navy;
+}
+
+table.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+thead, p.tableblock.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.tableblock {
+  margin-top: 0;
+}
+table.tableblock {
+  border-width: 3px;
+  border-spacing: 0px;
+  border-style: solid;
+  border-color: #527bbd;
+  border-collapse: collapse;
+}
+th.tableblock, td.tableblock {
+  border-width: 1px;
+  padding: 4px;
+  border-style: solid;
+  border-color: #527bbd;
+}
+
+table.tableblock.frame-topbot {
+  border-left-style: hidden;
+  border-right-style: hidden;
+}
+table.tableblock.frame-sides {
+  border-top-style: hidden;
+  border-bottom-style: hidden;
+}
+table.tableblock.frame-none {
+  border-style: hidden;
+}
+
+th.tableblock.halign-left, td.tableblock.halign-left {
+  text-align: left;
+}
+th.tableblock.halign-center, td.tableblock.halign-center {
+  text-align: center;
+}
+th.tableblock.halign-right, td.tableblock.halign-right {
+  text-align: right;
+}
+
+th.tableblock.valign-top, td.tableblock.valign-top {
+  vertical-align: top;
+}
+th.tableblock.valign-middle, td.tableblock.valign-middle {
+  vertical-align: middle;
+}
+th.tableblock.valign-bottom, td.tableblock.valign-bottom {
+  vertical-align: bottom;
+}
+
+
+/*
+ * manpage specific
+ *
+ * */
+
+body.manpage h1 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-top: 2px solid silver;
+  border-bottom: 2px solid silver;
+}
+body.manpage h2 {
+  border-style: none;
+}
+body.manpage div.sectionbody {
+  margin-left: 3em;
+}
+
+@media print {
+  body.manpage div#toc { display: none; }
+}
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([1-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  if (!toc) {
+    return;
+  }
+
+  // Delete existing TOC entries in case we're reloading the TOC.
+  var tocEntriesToRemove = [];
+  var i;
+  for (i = 0; i < toc.childNodes.length; i++) {
+    var entry = toc.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div'
+     && entry.getAttribute("class")
+     && entry.getAttribute("class").match(/^toclevel/))
+      tocEntriesToRemove.push(entry);
+  }
+  for (i = 0; i < tocEntriesToRemove.length; i++) {
+    toc.removeChild(tocEntriesToRemove[i]);
+  }
+
+  // Rebuild TOC entries.
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  // Delete existing footnote entries in case we're reloading the footnodes.
+  var i;
+  var noteholder = document.getElementById("footnotes");
+  if (!noteholder) {
+    return;
+  }
+  var entriesToRemove = [];
+  for (i = 0; i < noteholder.childNodes.length; i++) {
+    var entry = noteholder.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div' && entry.getAttribute("class") == "footnote")
+      entriesToRemove.push(entry);
+  }
+  for (i = 0; i < entriesToRemove.length; i++) {
+    noteholder.removeChild(entriesToRemove[i]);
+  }
+
+  // Rebuild footnote entries.
+  var cont = document.getElementById("content");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      var note = spans[i].getAttribute("data-note");
+      if (!note) {
+        // Use [\s\S] in place of . so multi-line matches work.
+        // Because JavaScript has no s (dotall) regex flag.
+        note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+        spans[i].innerHTML =
+          "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+        spans[i].setAttribute("data-note", note);
+      }
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+},
+
+install: function(toclevels) {
+  var timerId;
+
+  function reinstall() {
+    asciidoc.footnotes();
+    if (toclevels) {
+      asciidoc.toc(toclevels);
+    }
+  }
+
+  function reinstallAndRemoveTimer() {
+    clearInterval(timerId);
+    reinstall();
+  }
+
+  timerId = setInterval(reinstall, 500);
+  if (document.addEventListener)
+    document.addEventListener("DOMContentLoaded", reinstallAndRemoveTimer, false);
+  else
+    window.onload = reinstallAndRemoveTimer;
+}
+
+}
+asciidoc.install(2);
+/*]]>*/
+</script>
+</head>
+<body class="book">
+<div id="header">
+<h1>P.M.S Perl - Messaging System</h1>
+<span id="author">Benjamin Zeller, Lukas Michalski , Thorsten Schwalb</span><br />
+<div id="toc">
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_einleitung">Einleitung</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Dieses Dokument beschreibt die Funktionsweise und Implementation
+des Perl Messaging Systems, also den Core-Server, die Erweiterung durch
+Module, das Admin Interface und den Chat Client.
+Die Implementation und Entwicklung dieser Software erfolgte im Rahmen
+der Technikerausbildung im Schuljahr 2011/12 in der Klasse ITT7/8.</p></div>
+<div class="paragraph"><p>Die Arbeiten an der Software wurden gemeinschaftlich von Lukas Michalsi,
+Benjamin Zeller und Thorsten Schwalb durchgeführt.</p></div>
+<div class="sect2">
+<h3 id="_core_system">Core-System</h3>
+<div class="paragraph"><p>Das meisste Augenmerk lag hierbei auf dem Herzstück des PMS , dem Core.
+Die Hauptziele bei der Impementation des Cores waren wie folgt:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Implementation eines Multi-Channel Multi-User Chatservers
+</p>
+</li>
+<li>
+<p>
+Quasi parallele Verarbeitung mehrerer Connections
+</p>
+</li>
+<li>
+<p>
+Schnelle Asynchrone Verarbeitung der Commands, durch Eventbasierte Programmierung
+</p>
+</li>
+<li>
+<p>
+Erweiterbarkeit durch Modularisierung
+</p>
+<div class="olist loweralpha"><ol class="loweralpha">
+<li>
+<p>
+Erweiterbarkeit der Userfunktionen durch Plugins
+</p>
+</li>
+<li>
+<p>
+Erweiterbarkeit der Connectivity durch sogenannte Connection Provider
+</p>
+</li>
+</ol></div>
+</li>
+<li>
+<p>
+Implementation eines einfachen Chatprotokolls
+</p>
+</li>
+<li>
+<p>
+Möglichst lose Objektkopplung zwischen den Plugins und dem Core
+</p>
+</li>
+</ol></div>
+<div class="paragraph"><p>Alle dieser Ziele wurden bis zum Projektende in die Tat umgesetzt und liegen
+in der aktuellen Softwareversion vor.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_erweiterungs_module">Erweiterungs-Module</h3>
+<div class="paragraph"><p>Die Erweiterungsmodule, sollen demonstrieren auf welche Weise es möglich ist
+den P.M.S. Server zu erweitern. Vor allem das Security Modul ist hierbei
+hervorzuheben, da es fast die komplette Palette der Möglichkeiten ausnutzt.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_html5_chat_client">HTML5 - Chat Client</h3>
+<div class="paragraph"><p>Der Chat Client ist die Referenzimplementation eines Clients, basierend auf
+einer Kombination von Html und Javascript.
+Die Hauptziele der Implementation waren wie folgt:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Komplette Referenzimplementation des P.M.S. Chatprotokolls
+</p>
+</li>
+<li>
+<p>
+Die Möglichkeit in mehreren Channeln gleichzeitig chatten zu können
+</p>
+</li>
+<li>
+<p>
+Moderne und ansprechende HTML5 basierte Oberfläche
+</p>
+</li>
+</ol></div>
+</div>
+<div class="sect2">
+<h3 id="_admin_interface">Admin-Interface</h3>
+<div class="paragraph"><p>Das Admin Interface wird benötigt, um auf die von Modulen bereitgestellten
+Daten zugreifen zu können, oder diese zu konfigurieren. Die Implementierung
+erfolgte in Perl, Javascript und Html.</p></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_implementation_funktionsweise_und_design_des_core_systems">Implementation, Funktionsweise und Design des Core-Systems</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_allgemein">Allgemein</h3>
+<div class="paragraph"><p>Die komplette Implementation des Cores erfolgte in Perl und wurde als reine
+objektorienterte, eventbasierte Software konzipiert.
+Der Core ist die zentrale Einheit des P.M.S. es benötigt bis auf
+einen ConnectionProvider keine Erweiterungsmodule um eine Basis Chat Funktionalität
+zu Verfügung zu stellen.</p></div>
+<div class="sect3">
+<h4 id="_verwendete_fremdsoftware_im_core">Verwendete Fremdsoftware im Core</h4>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="http://search.cpan.org/~mlehmann/AnyEvent-6.14/">AnyEvent (6.14)</a>
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><tt>Das AnyEvent Modul stellt den vom P.M.S. verwendeten Event-Loop
+und einige Helferklassen bereit.Es ermöglicht eine sogenannte asynchrone-Programmierung,
+diese versetzt den P.M.S. Core in die Lage mehrere Operationen quasi-parallel auszuführen.
+So muss man zum Beispiel nicht darauf warten, bis eine Schreiboperation auf
+einen Dateideskriptor beendet ist, sondern das System kümmert sich um dessen
+Fertigstellung. Dabei kann man jedem asynchronen Aufruf diverse Callback Funktionen
+mitgeben, die nach erfolgreicher Fertigstellung des Befehls, oder sogar im Fehlerfall
+aufgerufen werden.</tt></pre>
+</div></div>
+</li>
+<li>
+<p>
+<a href="http://search.cpan.org/~elmex/Object-Event-1.23/lib/Object/Event.pm">Object::Event (1.23)</a>
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><tt>Dieses Modul stellt das sogenannte Observer-Pattern zur Verfügung,
+das es uns ermöglicht interne Signale (Events) zu verschicken und zu verarbeiten.
+Es ermöglicht dem Core komplett ohne das Wissen über eventuell geladene Module,
+oder deren Voraussetzungen zu operieren.</tt></pre>
+</div></div>
+</li>
+</ul></div>
+<div class="paragraph"><p>Bei der Implementation wurde auf ein modulares Design wert gelegt. Der Server ist somit beliebig erweiterbar.
+Die Module werden in der Konfigurationsdatei hinterlegt, und vom Server zur Laufzeit geladen und initialisiert.</p></div>
+<div class="paragraph"><p><em>Es gibt hierbei zwei Arten von Modulen:</em></p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+ConnectionProvider
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+  Der ConnectionProvider macht es möglich, den Core über beliebige Kommunikationswege zu verbinden,
+  wie zB TCP-Sockets oder Websockets. Selbst ausgefallene Möglichkeiten wie zB HTTP-Server Push wären
+  denkbar.
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Plugins
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+  Plugins sind eine Möglichkeit den Server um diverse Funktionalitäten zu erweitern wie z.B. einen Backlog
+  oder selbst ein Chat-Bot (maschineller User) sind möglich.
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>Es wäre denkbar selbst das Chat Protokoll als Modul zu implementieren, dies war jedoch im Rahmen des Projekts
+nicht möglich.</p></div>
+<div class="paragraph"><p>MODUL BILD</p></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_signale">Signale</h3>
+<div class="paragraph"><p>Signale und Callbacks werden von uns verwendet um Objekten eine Möglichkeit zu geben sich untereinander
+zu Verständigen, ohne jedoch zuviel vom eigentlichen Kommunikationspartner wissen zu müssen.
+Diese Technik ist auch als Observer-Pattern bekannt <span class="footnote"><br />[<a href="http://de.wikipedia.org/wiki/Observer_(Entwurfsmuster">http://de.wikipedia.org/wiki/Observer_(Entwurfsmuster</a>)]<br /></span>;.</p></div>
+<div class="paragraph"><p>Als Ausgangspunkt wird von uns das auch dem CPAN nachinstallierte Modul Object::Event verwendet. Da dies aber keinerlei
+Möglichkeiten hatte zu testen ob ein bestimmtes Signal eigentlich existiert oder nicht, musste die Klasse noch erweitert
+werden.</p></div>
+<div class="paragraph"><p>Alle Objekte die Signale versenden wollen, müssen vom Objekt <a href="file:///home/zbenjamin/workspace/pms-project/pms-docs/pms-server/files/Pms/Core/Object-pm.html">Pms::Core::Object</a> ableiten
+und in einem globalen Hash <strong>%pmsEvents</strong> alle von ihm versendeten Signale hinterlegen:</p></div>
+<div class="listingblock">
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="font-style: italic"><span style="color: #9A1900">#!/usr/bin/perl -w</span></span>
+
+<span style="font-weight: bold"><span style="color: #0000FF">package</span></span> MyPackage<span style="color: #990000">;</span>
+<span style="font-weight: bold"><span style="color: #0000FF">use</span></span> Pms<span style="color: #990000">::</span>Core<span style="color: #990000">::</span>Object<span style="color: #990000">;</span>
+<span style="font-weight: bold"><span style="color: #0000FF">use</span></span> strict<span style="color: #990000">;</span>
+<span style="font-weight: bold"><span style="color: #0000FF">use</span></span> utf8<span style="color: #990000">;</span>
+
+<span style="font-weight: bold"><span style="color: #0000FF">our</span></span> <span style="color: #009900">@ISA</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">qw</span></span><span style="color: #990000">(</span>Pms<span style="color: #990000">::</span>Core<span style="color: #990000">::</span>Object<span style="color: #990000">);</span>
+
+<span style="font-weight: bold"><span style="color: #0000FF">our</span></span> <span style="color: #009900">%PmsEvents</span> <span style="color: #990000">=</span> <span style="color: #990000">(</span>
+  <span style="color: #FF0000">'signal1'</span> <span style="color: #990000">=&gt;</span> <span style="color: #993399">1</span><span style="color: #990000">,</span>
+  <span style="color: #FF0000">'signal2'</span> <span style="color: #990000">=&gt;</span> <span style="color: #993399">1</span>
+<span style="color: #990000">);</span></tt></pre></div></div>
+<div class="paragraph"><p>Diese Signale können mit beliebigen Callbacks verknüpft und es können auch mehrere Callbacks pro Signal registriert
+werden. Die Callbacks werden in der gleichen Reihenfolge aufgerufen, wie sie beim Sender-Objekt registriert werden.
+Es ist ausserdem möglich Argumente mit an die Callbacks zu übergeben.</p></div>
+<div class="listingblock">
+<div class="title">Beispiel</div>
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="font-style: italic"><span style="color: #9A1900">#Code im Sender Objekt:</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">sub</span></span> anyOperation<span style="color: #FF0000">{</span>
+  <span style="font-style: italic"><span style="color: #9A1900">#aulösen des Signals:</span></span>
+  <span style="color: #009900">$self</span><span style="color: #990000">-&gt;</span><span style="font-weight: bold"><span style="color: #000000">emitSignal</span></span><span style="color: #990000">(</span><span style="color: #FF0000">'some_signal'</span><span style="color: #990000">,</span><span style="color: #FF0000">"arg1"</span><span style="color: #990000">,</span><span style="color: #FF0000">"arg2"</span><span style="color: #990000">);</span>
+<span style="color: #FF0000">}</span>
+
+<span style="font-style: italic"><span style="color: #9A1900">#Code im Receiver Objekt:</span></span>
+<span style="font-weight: bold"><span style="color: #0000FF">sub</span></span> createConnections<span style="color: #FF0000">{</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$self</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$signalSender</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>
+
+  <span style="color: #009900">$signalSender</span><span style="color: #990000">-&gt;</span><span style="font-weight: bold"><span style="color: #000000">connect</span></span><span style="color: #990000">(</span>
+    some_signal <span style="color: #990000">=&gt;</span> <span style="color: #009900">$self</span><span style="color: #990000">-&gt;</span><span style="font-weight: bold"><span style="color: #000000">_callback</span></span><span style="color: #990000">()</span>
+  <span style="color: #990000">);</span>
+<span style="color: #FF0000">}</span>
+
+<span style="font-weight: bold"><span style="color: #0000FF">sub</span></span> _callback<span style="color: #FF0000">{</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$self</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">return</span></span> <span style="font-weight: bold"><span style="color: #0000FF">sub</span></span><span style="color: #FF0000">{</span>
+    <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$eventChain</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span> <span style="font-style: italic"><span style="color: #9A1900">#Die Event Chain über die das Event abgebrochen werden kann</span></span>
+    <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$arg1</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>
+    <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$arg2</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>
+    <span style="font-style: italic"><span style="color: #9A1900">#do something</span></span>
+  <span style="color: #FF0000">}</span>
+<span style="color: #FF0000">}</span></tt></pre></div></div>
+<div class="paragraph"><p>Beim connecten der Signale, wir automatisch in der kompletten Hirarchie des Objekts nach der Definition
+eines Signals im PmsEvents Hash gesucht. Somit können auch Signale von übergeordneten Klassen verwendet
+werden, ohne diese noch einmal im Hash angeben zu müssen.</p></div>
+</div>
+<div class="sect2">
+<h3 id="CHAP_EVENTS">Events</h3>
+<div class="paragraph"><p>Jedes Modul kann sich für bestimmte Server Events registrieren, es hinterlegt dabei eine Callback-Funktionen
+die beim auftreten dieses Events ausgeführt wird.
+Server Events sind hierbei nichts weiter als Signale die von der Application Klasse versendet werden, mit der
+Besonderheit, das sie immer ein Event Objekt als ersten und einzigen Parameter mit schicken.</p></div>
+<div class="listingblock">
+<div class="title">Beispiel</div>
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="font-weight: bold"><span style="color: #0000FF">sub</span></span> createConnections<span style="color: #FF0000">{</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$self</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>
+  <span style="font-style: italic"><span style="color: #9A1900">#Weist den Server an das Event client_connect_success mit dem Callback zu verbinden</span></span>
+  <span style="color: #009900">$self</span><span style="color: #990000">-&gt;</span><span style="color: #FF0000">{</span>m_parent<span style="color: #FF0000">}</span><span style="color: #990000">-&gt;</span><span style="font-weight: bold"><span style="color: #000000">connect</span></span><span style="color: #990000">(</span>
+    client_connect_success <span style="color: #990000">=&gt;</span> <span style="color: #009900">$self</span><span style="color: #990000">-&gt;</span><span style="font-weight: bold"><span style="color: #000000">_callback</span></span><span style="color: #990000">()</span>
+  <span style="color: #990000">);</span>
+<span style="color: #FF0000">}</span>
+
+<span style="font-weight: bold"><span style="color: #0000FF">sub</span></span> _callback<span style="color: #FF0000">{</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$self</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">return</span></span> <span style="font-weight: bold"><span style="color: #0000FF">sub</span></span><span style="color: #FF0000">{</span>
+    <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$eventChain</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span> <span style="font-style: italic"><span style="color: #9A1900">#Die Event Chain über die das Event abgebrochen werden kann</span></span>
+    <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$eventType</span>  <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span> <span style="font-style: italic"><span style="color: #9A1900">#Das Event Objekt selbst ,das diverse Informationen enthält</span></span>
+
+    <span style="font-style: italic"><span style="color: #9A1900">#Eine Message an den User schicken</span></span>
+    <span style="color: #009900">$eventType</span><span style="color: #990000">-&gt;</span><span style="font-weight: bold"><span style="color: #000000">connection</span></span><span style="color: #990000">()-&gt;</span><span style="font-weight: bold"><span style="color: #000000">postMessage</span></span><span style="color: #990000">(</span>
+      Pms<span style="color: #990000">::</span>Prot<span style="color: #990000">::</span>Messages<span style="color: #990000">::</span><span style="font-weight: bold"><span style="color: #000000">serverMessage</span></span><span style="color: #990000">(</span><span style="color: #FF0000">"default"</span><span style="color: #990000">,</span><span style="color: #FF0000">"Hallo vom Callback"</span><span style="color: #990000">)</span>
+    <span style="color: #990000">);</span>
+  <span style="color: #FF0000">}</span>
+<span style="color: #FF0000">}</span></tt></pre></div></div>
+<div class="paragraph"><p>Folgende Events stehen zur Verfügung:</p></div>
+<div class="tableblock">
+<table rules="all"
+width="100%"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col width="50%" />
+<col width="50%" />
+<thead>
+<tr>
+<th align="left" valign="top">Name                           </th>
+<th align="left" valign="top"> Beschreibung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">client_connect_request</p></td>
+<td align="left" valign="top"><p class="table">Ein neuer Client versucht sich zu verbinden</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">client_connect_success</p></td>
+<td align="left" valign="top"><p class="table">Ein neuer Client hat eine Verbindung aufgebaut</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">client_disconnect_success</p></td>
+<td align="left" valign="top"><p class="table">Ein Client hat die Verbindung geschlossen</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">message_send_request</p></td>
+<td align="left" valign="top"><p class="table">Ein Client versucht eine Message zu senden</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">message_send_success</p></td>
+<td align="left" valign="top"><p class="table">Ein Client hat eine Message gesendet</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">join_channel_request</p></td>
+<td align="left" valign="top"><p class="table">Ein Client möchte einen Channel betreten</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">join_channel_success</p></td>
+<td align="left" valign="top"><p class="table">Ein Client hat einen Channel betreten</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">leave_channel_success</p></td>
+<td align="left" valign="top"><p class="table">Ein Client hat einen Channel verlassen</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">create_channel_request</p></td>
+<td align="left" valign="top"><p class="table">Ein Client möchte einen Channel erstellen</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">create_channel_success</p></td>
+<td align="left" valign="top"><p class="table">Ein Client hat einen Channel erstellt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">channel_close_success</p></td>
+<td align="left" valign="top"><p class="table">Ein Channel wurde geschlossen</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">change_nick_request</p></td>
+<td align="left" valign="top"><p class="table">Ein Client versucht seinen Nickname zu ändern</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">change_nick_success</p></td>
+<td align="left" valign="top"><p class="table">Ein Client hat seinen Nickname geändert</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">change_topic_request</p></td>
+<td align="left" valign="top"><p class="table">Ein Client versucht ein Channel Topic zu ändern</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">change_topic_success</p></td>
+<td align="left" valign="top"><p class="table">Ein Client hat ein Channel Topic zu geänderd</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">execute_command_request</p></td>
+<td align="left" valign="top"><p class="table">Ein Client versucht ein Command auszuführen</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>Jedes Event, das über ein "_request" Postfix verfügt, kann in der Callback Funktion unter Angabe eines Grundes zurückgewiesen werden,
+die weitere Verarbeitung wird somit abgebrochen und der User bekommt eine entsprechende Meldung darüber.
+Hiermit wird es nicht nur ermöglicht, auf Events zu reagieren sondern diese sogar von ausserhalb des Cores zu steuern.
+Diese Funktionalität wird zum Beispiel im Security Modul verwendet um Userrechte zu überprüfen, allerdings könnte man damit auch
+einfachere Wortfilter erstellen, die zB Messages mit Schimpfwörtern herausfiltern.</p></div>
+<div class="listingblock">
+<div class="title">Zurückweisung eines Events im Callback</div>
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="font-weight: bold"><span style="color: #0000FF">sub</span></span> _callback<span style="color: #FF0000">{</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$self</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">return</span></span> <span style="font-weight: bold"><span style="color: #0000FF">sub</span></span><span style="color: #FF0000">{</span>
+    <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$eventChain</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span> <span style="font-style: italic"><span style="color: #9A1900">#Die Event Chain über die das Event abgebrochen werden kann</span></span>
+    <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$eventType</span>  <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span> <span style="font-style: italic"><span style="color: #9A1900">#Das Event Objekt selbst ,das diverse Informationen enthält</span></span>
+
+    <span style="font-style: italic"><span style="color: #9A1900">#Setzt die Error Message die an den Client gesendet wird</span></span>
+    <span style="color: #009900">$eventType</span><span style="color: #990000">-&gt;</span><span style="font-weight: bold"><span style="color: #000000">reject</span></span><span style="color: #990000">(</span><span style="color: #FF0000">"Eine beliebige Error Message"</span><span style="color: #990000">);</span>
+
+    <span style="font-style: italic"><span style="color: #9A1900">#Stoppt das Event</span></span>
+    <span style="color: #009900">$eventChain</span><span style="color: #990000">-&gt;</span>stop_event<span style="color: #990000">;</span>
+  <span style="color: #FF0000">}</span>
+<span style="color: #FF0000">}</span></tt></pre></div></div>
+</div>
+<div class="sect2">
+<h3 id="_konnektivit_auml_t">Konnektivit&auml;t</h3>
+<div class="sect3">
+<h4 id="_allgemein_2">Allgemein</h4>
+<div class="paragraph"><p>Wie in der Einleitung schon kurz erwähnt, ist die komplette Kommunikation im Core modular aufgebaut. Hierfür sind zwei abstrakte Klassen
+im Core vorhanden, die die Implementationsdetails der jeweiligen Kommunikationsbackends "verstecken".</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="file:///home/zbenjamin/workspace/pms-project/pms-docs/pms-server/files/Pms/Core/ConnectionProvider-pm.html">Pms::Core::ConnectionProvider</a>
+</p>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph"><p>Der ConnectionProvider ist die Abstrakte Form eines Server-Sockets, wie man ihn von der normalen
+TCP Programmierung kennt:
+Er nimmt Verbindungsversuche an und informiert den Server über ein Signal (connectionAvailable) darüber,
+das neue Connections vorliegen. Hierbei wird komplett abstrahiert wie dieser Ablauf im Hintergrund funktioniert.
+Ob dies nun ein HTTP Requst oder ein normaler TCP-Socket ist, ist für den Core komplett irrelevant.</p></div>
+</div></div>
+</li>
+<li>
+<p>
+<a href="file:///home/zbenjamin/workspace/pms-project/pms-docs/pms-server/files/Pms/Core/Connection-pm.html">Pms::Core::Connection</a>
+</p>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph"><p>Die Connection Klasse hat zwei Aufgaben:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Sie abstrahiert die darunterliegende Kommunikation
+</p>
+</li>
+<li>
+<p>
+Sie identifiziert den verbundenen User und weiss dessen Nicknamen
+</p>
+</li>
+</ol></div>
+<div class="paragraph"><p>Am besten kann man sich die Connection Klasse als einen Socket vorstellen, sie empfängt und schickt
+Daten entweder synchron oder asynchron, je nachdem welche Funktion verwendet wurde.
+Auch hier ist das darunterliegende Protokoll irrelevant. Unter Zuhilfenahme einer SessionId und eines
+Mailservers könnte man sogar, eine Kommunikation per EMail über diese Klasse realisieren.</p></div>
+</div></div>
+</li>
+</ul></div>
+<div class="paragraph"><p>Die verwendeten Backends werden über die Konfigurationsdatei festgelegt und zur Laufzeit geladen
+und initialisiert.
+Standardmässig sollten sie im Packet Pms::Net untergebracht sein, können aber durch Verwendung des
+FQN in der Konfigurationsdatei von überall geladen werden (solange sie sich im Include Pfad befinden)</p></div>
+</div>
+<div class="sect3">
+<h4 id="_backend_implementation_websocket">Backend Implementation Websocket</h4>
+<div class="paragraph"><p>Die Referenzimplementation des Backends ist auf dem WebSocket Protokoll aufgebaut,
+das es dem Server ermöglicht HTML5-WebSocket Connections entgegenzunehmen, somit kann jeder
+mit einem HTML5-fähigen Browser, ohne etwas installieren zu müssen, eine Verbindung zum
+Chatserver aufbauen.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="paragraph"><p>Im Rahmen der Projektarbeit, wurde nur der Chromium Browser getestet.</p></div>
+</td>
+</tr></table>
+</div>
+<div class="sect4">
+<h5 id="_verwendete_fremdsoftware">Verwendete Fremdsoftware</h5>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="http://search.cpan.org/~vti/Protocol-WebSocket-0.00906/lib/Protocol/WebSocket.pm">Protocol::WebSocket (0.00906)</a>
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><tt>Ein aus dem CPAN installiertes Modul, implementiert das Websocket Protokoll.
+Hierbei wird ein einfacher HTTP-Handshake an den Server gesendet:
+
+GET /chat HTTP/1.1
+Host: server.example.com
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+Origin: http://example.com
+Sec-WebSocket-Protocol: chat, superchat
+Sec-WebSocket-Version: 13
+
+Der Server antwortet dementsprechend und wechselt von der HTTP
+in die Socket Kommunikation. Danach kann man die Verbindung wie eine
+normale TCP Verbindung verwenden.
+
+Weiterführende Informationen:
+http://de.wikipedia.org/wiki/WebSocket</tt></pre>
+</div></div>
+</li>
+</ul></div>
+</div>
+<div class="sect4">
+<h5 id="_line_protokoll">Line Protokoll</h5>
+<div class="paragraph"><p>Da man, wie bei jeder Stream basierten Verbindung (wie zB Tcp oder Websocket), nicht weiss wann eine Nachricht komplett
+angekommen ist oder ob man noch auf Daten warten muss, braucht man ein Protokoll das einem hilft Anfang und
+Ende der Nachrichten zu erkennen.
+Hierbei haben wir uns für Netstring, ein einfaches Textbasiertes Protokoll entschieden. Eine Nachricht im Netstring
+Format hat diese Darstellung:</p></div>
+<div class="sidebarblock">
+<div class="content">
+<div class="paragraph"><p><span class="red">16</span> <span class="green">:</span> Das ist ein Text <span class="green">,</span></p></div>
+</div></div>
+<div class="paragraph"><p>Die Zahl am Beginn der Nachricht, beschreibt wieviel <strong>Zeichen</strong> sich zwischen dem beiden Delimitern : und , befinden.
+Hierbei ist vollkommen egal welche Zeichen, sogar ein weiterer Netstring könnte eingebettet werden oder sogar binäre Daten.
+Letzteres ist aber aufgrund von Einschränkungen durch das WebSocket Protokoll nicht möglich, da dies nur UTF-8 Character
+zulässt.
+Nun ist es ein leichtes für den Server zu erkennen wann eine Nachricht endet und wann er noch warten muss:</p></div>
+<div class="paragraph"><p>FLOWCHART Netstring</p></div>
+<div class="paragraph"><p>Weitere Informationen zu Netstring, findet man in der offiziellen Dokumentation:
+<a href="http://cr.yp.to/proto/netstrings.txt">http://cr.yp.to/proto/netstrings.txt</a></p></div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_chat_und_message_protokoll">Chat und Message Protokoll</h4>
+<div class="paragraph"><p>Damit Client und Server richtig miteinander kommunizieren können, haben wir
+ein Chatprotokoll festgelegt, und einen eigenen handgeschriebenen Parser dafür
+entwickelt.
+Die Implementierung befindet sich im <a href="file:///home/zbenjamin/workspace/pms-project/pms-docs/pms-server/files/Pms/Prot/Parser-pm.html">Pms::Prot::Parser</a> Modul.</p></div>
+<div class="paragraph"><p>Der Aufbau einer Message hat immer den gleichen Aufbau:</p></div>
+<div class="sidebarblock">
+<div class="content">
+<div class="paragraph"><p>/command "Hallo ich bin ein String" 12345</p></div>
+</div></div>
+<div class="paragraph"><p>Folgende Regeln müssen zutreffen:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Eine Message startet immer mit einem /
+</p>
+</li>
+<li>
+<p>
+Nach dem / muss sich ein Token befinden (Kommandoname),
+</p>
+</li>
+<li>
+<p>
+Ein Token startet immer mit einem Buchstaben und kann nur
+  aus Buchstaben und Zahlen bestehen
+</p>
+</li>
+<li>
+<p>
+Alle Argumente sind duch Leerzeichen getrennt
+</p>
+</li>
+<li>
+<p>
+Ein Argument kann entweder ein String oder eine Nummer sein
+</p>
+</li>
+<li>
+<p>
+Ein String startet entweder mit einem " oder einem ' , das gleiche
+  Zeichen muss verwendet werden um den String zu beenden
+</p>
+</li>
+<li>
+<p>
+Kommt das Escape Zeichen im String noch einmal vor muss es mit
+  einem \ escaped werden.
+</p>
+</li>
+<li>
+<p>
+Eine Nummer kann mit folgenden Zeichen beginnen:  +,-,. oder einer Nummer
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Wenn der Parser keinen Fehler findet, wird er einen Hash zurückgeben der
+den Kommandonamen (das Token nach dem /) und die Argumente als Array
+beinhält. Dieses wird dann an das Server-Objekt(Pms::Application) zur weiteren
+Verarbeitung weitergegeben.</p></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_das_server_object">Das Server Object</h3>
+<div class="paragraph"><p>Das Herzstück, das <a href="">Pms::Application</a> Modul verbindet die bisher
+beschriebenen Funktionalitäten miteinander. Es sorgt dafür, das die ConnectionProvider
+und Module geladen und initialisiert werden.</p></div>
+<div class="paragraph"><p>Der Server ist ausserdem dafür zuständig, die einzelnen Connections anzunehmen und
+zu verwalten, Channels zu erstellen und zu löschen und die Messages richtig zu verteilen.</p></div>
+<div class="sect3">
+<h4 id="_empfang_und_abarbeitung_von_messages">Empfang und Abarbeitung von Messages</h4>
+<div class="paragraph"><p>Nachdem, der Server von einer der bestehenden Connections ein dataAvailable Signal
+erhalten ,die Daten ausgelesen und sie wie in den Kapiteln "Line Protokoll" und
+"Chat und Message Protokoll" verarbeitet hat, liegt ein Hash mit folgendem Aufbau vor:</p></div>
+<div class="listingblock">
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="color: #990000">(</span>
+  name <span style="color: #990000">=&gt;</span> <span style="color: #FF0000">"Kommandoname"</span><span style="color: #990000">,</span>
+  args <span style="color: #990000">=&gt;</span> <span style="color: #990000">[</span>
+    arg0<span style="color: #990000">,</span>
+    arg1<span style="color: #990000">,</span>
+    <span style="font-style: italic"><span style="color: #9A1900">#,....,</span></span>
+    argn
+  <span style="color: #990000">]</span>
+<span style="color: #990000">);</span></tt></pre></div></div>
+<div class="paragraph"><p>Der Server sucht nun in einem internen Hash, ob ein Callback für dieses Kommando
+hinterlegt wurde, und führt es aus. Als Parameter für den Callback wird immer
+als erstes Argument das Connection Objekt übergeben, das das Kommando ausführt,
+danach das Array mit den Argumenten aus dem Hash.</p></div>
+<div class="sect4">
+<h5 id="_default_messages_kommandos">Default Messages/Kommandos</h5>
+<div class="paragraph"><p>Der Core Server kommt von Haus aus mit einigen vordefinierten Kommandos:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<strong>/send "channel" "message"</strong><br />
+  Eine Chatmessage, die an einen Channel geschickt wird
+</p>
+</li>
+<li>
+<p>
+<strong>/join "channel"</strong><br />
+  Einen Channel betreten
+</p>
+</li>
+<li>
+<p>
+<strong>/leave "channel"</strong><br />
+  Einen Channel verlassen
+</p>
+</li>
+<li>
+<p>
+<strong>/create "channel"</strong><br />
+  Einen neuen Channel erstellen
+</p>
+</li>
+<li>
+<p>
+<strong>/list</strong><br />
+  Eine Liste von bestehenden Channeln abfragen
+</p>
+</li>
+<li>
+<p>
+<strong>/nick "newname"</strong><br />
+  Den eigenen Usernamen ändern
+</p>
+</li>
+<li>
+<p>
+<strong>/users</strong><br />
+  Eine Liste von Usern erhalten (internes Kommando)
+</p>
+</li>
+<li>
+<p>
+<strong>/topic "channel" "topic"</strong><br />
+  Die Überschrift/ das Thema eines Channels ändern
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_erweiterungs_api_f_uuml_r_module">Erweiterungs API f&uuml;r Module</h4>
+<div class="paragraph"><p>Eine weitere wichtige Aufgabe, ist die Bereitstellung einer API für die Erweiterung
+durch Module. Dazu gehören nicht nur die Events, die durch die Module beinflusst werden
+können, sondern auch eine Möglichkeit eigene "Chat-Kommandos" zu registrieren,
+die vom User oder der Clientapplikation aufgerufen werden können.
+Ein Modul muss dazu nur ein Kommando mit einer dazugehörigen Callback-Funktion
+registrieren, den Rest macht das Server Objekt von alleine:</p></div>
+<div class="listingblock">
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="font-weight: bold"><span style="color: #0000FF">sub</span></span> createCommands<span style="color: #FF0000">{</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$self</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$srv</span>  <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span> <span style="font-style: italic"><span style="color: #9A1900">#Das Server Objekt</span></span>
+
+  <span style="color: #009900">$srv</span><span style="color: #990000">-&gt;</span><span style="font-weight: bold"><span style="color: #000000">registerCommand</span></span><span style="color: #990000">(</span><span style="color: #FF0000">"ping"</span><span style="color: #990000">,</span><span style="color: #009900">$self</span><span style="color: #990000">-&gt;</span><span style="font-weight: bold"><span style="color: #000000">_pingCallback</span></span><span style="color: #990000">());</span>
+<span style="color: #FF0000">}</span>
+
+<span style="font-weight: bold"><span style="color: #0000FF">sub</span></span> _pingCallback<span style="color: #FF0000">{</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$self</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">return</span></span> <span style="font-weight: bold"><span style="color: #0000FF">sub</span></span><span style="color: #FF0000">{</span>
+    <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$connection</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>
+    <span style="color: #009900">$connection</span><span style="color: #990000">-&gt;</span><span style="font-weight: bold"><span style="color: #000000">postMessage</span></span><span style="color: #990000">(</span>Pms<span style="color: #990000">::</span>Prot<span style="color: #990000">::</span>Messages<span style="color: #990000">::</span><span style="font-weight: bold"><span style="color: #000000">serverMessage</span></span><span style="color: #990000">(</span><span style="color: #FF0000">"default"</span><span style="color: #990000">,</span><span style="color: #FF0000">"Pong"</span><span style="color: #990000">));</span>
+  <span style="color: #FF0000">}</span>
+<span style="color: #FF0000">}</span></tt></pre></div></div>
+<div class="paragraph"><p>Führt der User jetzt das Kommando <strong>/ping</strong> aus, wird der Server im "default" <span class="footnote"><br />[Der default Channel ist das Hauptfenster in dem der Serverprozess Nachrichten schickt]<br /></span> Channel mit "Pong"
+antworten.</p></div>
+<div class="paragraph"><p>Das verarbeiten und stoppen von Events wurde im Kapitel <a href="#CHAP_EVENTS">Events</a> schon beschrieben.
+Eigene Events zu registrieren ist jedoch nicht möglich,allerdings kann über das <strong>execute_command_request</strong>
+Event die Ausführung eines von einem Modul registrierten Kommandos beinflusst werden.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_laden_der_module">Laden der Module</h4>
+<div class="paragraph"><p>Das Server Objekt, lädt die Module zur Laufzeit, welche Module der Server lädt, in welcher Reihenfolge
+und welche Abhängigkeiten die Module untereinander haben, werden in der Server Konfigurationsdatei
+hinterlegt.
+Initialisierung und Shutdown der Module muss in den Konstruktor und Destruktor Funktionen durchgeführt
+werden, ansonsten werden keine Anforderungen an die API der Module erstellt. Der Server übergibt als erstes
+Argument an den Konstruktor immer eine Referenz auf sich selbst und als zweites Argument den Konfigurationshash
+des Moduls, dieser wird aus der Konfigurationsdatei gelesen.</p></div>
+<div class="listingblock">
+<div class="title">Beispiel-Modul</div>
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="font-style: italic"><span style="color: #9A1900">#!/usr/bin/perl -w</span></span>
+
+<span style="font-weight: bold"><span style="color: #0000FF">package</span></span> Pms<span style="color: #990000">::</span>Modules<span style="color: #990000">::</span>Ping<span style="color: #990000">;</span>
+
+<span style="font-weight: bold"><span style="color: #0000FF">use</span></span> strict<span style="color: #990000">;</span>
+<span style="font-weight: bold"><span style="color: #0000FF">use</span></span> Pms<span style="color: #990000">::</span>Application<span style="color: #990000">;</span>
+<span style="font-weight: bold"><span style="color: #0000FF">use</span></span> Pms<span style="color: #990000">::</span>Prot<span style="color: #990000">::</span>Messages<span style="color: #990000">;</span>
+
+<span style="font-weight: bold"><span style="color: #0000FF">sub</span></span> new<span style="color: #FF0000">{</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$class</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$self</span>  <span style="color: #990000">=</span> <span style="color: #FF0000">{}</span><span style="color: #990000">;</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">bless</span></span> <span style="color: #990000">(</span><span style="color: #009900">$self</span><span style="color: #990000">,</span> <span style="color: #009900">$class</span><span style="color: #990000">);</span>
+
+  <span style="color: #009900">$self</span><span style="color: #990000">-&gt;</span><span style="color: #FF0000">{</span>m_parent<span style="color: #FF0000">}</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>    <span style="color: #FF0000"><b>&lt;1&gt;</b></span>
+  <span style="color: #009900">$self</span><span style="color: #990000">-&gt;</span><span style="color: #FF0000">{</span>m_config<span style="color: #FF0000">}</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>    <span style="color: #FF0000"><b>&lt;2&gt;</b></span>
+  <span style="color: #009900">$self</span><span style="color: #990000">-&gt;</span><span style="font-weight: bold"><span style="color: #000000">createCommands</span></span><span style="color: #990000">();</span>
+
+  <span style="font-weight: bold"><span style="color: #0000FF">return</span></span> <span style="color: #009900">$self</span><span style="color: #990000">;</span>
+<span style="color: #FF0000">}</span>
+
+<span style="font-weight: bold"><span style="color: #0000FF">sub</span></span> DESTROY<span style="color: #FF0000">{</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$self</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>
+  <span style="color: #009900">$self</span><span style="color: #990000">-&gt;</span><span style="font-weight: bold"><span style="color: #000000">shutdown</span></span><span style="color: #990000">();</span>
+<span style="color: #FF0000">}</span>
+
+<span style="font-weight: bold"><span style="color: #0000FF">sub</span></span> createCommands<span style="color: #FF0000">{</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$self</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$srv</span>  <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span> <span style="font-style: italic"><span style="color: #9A1900">#Das Server Objekt</span></span>
+
+  <span style="color: #009900">$srv</span><span style="color: #990000">-&gt;</span><span style="font-weight: bold"><span style="color: #000000">registerCommand</span></span><span style="color: #990000">(</span><span style="color: #FF0000">"ping"</span><span style="color: #990000">,</span><span style="color: #009900">$self</span><span style="color: #990000">-&gt;</span><span style="font-weight: bold"><span style="color: #000000">_pingCallback</span></span><span style="color: #990000">());</span> <span style="color: #FF0000"><b>&lt;3&gt;</b></span>
+<span style="color: #FF0000">}</span>
+
+<span style="font-weight: bold"><span style="color: #0000FF">sub</span></span> _pingCallback<span style="color: #FF0000">{</span>      <span style="color: #FF0000"><b>&lt;4&gt;</b></span>
+  <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$self</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">return</span></span> <span style="font-weight: bold"><span style="color: #0000FF">sub</span></span><span style="color: #FF0000">{</span>
+    <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$connection</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>
+    <span style="color: #009900">$connection</span><span style="color: #990000">-&gt;</span><span style="font-weight: bold"><span style="color: #000000">postMessage</span></span><span style="color: #990000">(</span>
+      Pms<span style="color: #990000">::</span>Prot<span style="color: #990000">::</span>Messages<span style="color: #990000">::</span><span style="font-weight: bold"><span style="color: #000000">serverMessage</span></span><span style="color: #990000">(</span><span style="color: #FF0000">"default"</span><span style="color: #990000">,</span><span style="color: #FF0000">"Pong"</span><span style="color: #990000">)</span>
+    <span style="color: #990000">);</span>
+  <span style="color: #FF0000">}</span>
+<span style="color: #FF0000">}</span>
+
+<span style="font-weight: bold"><span style="color: #0000FF">sub</span></span> shutdown<span style="color: #FF0000">{</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$self</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">warn</span></span> <span style="color: #FF0000">"Shutting Down"</span><span style="color: #990000">;</span>
+<span style="color: #FF0000">}</span>
+
+<span style="color: #993399">1</span><span style="color: #990000">;</span></tt></pre></div></div>
+<div class="colist arabic"><ol>
+<li>
+<p>
+Das ServerObjekt ist immer der erste Parameter
+</p>
+</li>
+<li>
+<p>
+Der Konfigurationshash des Moduls
+</p>
+</li>
+<li>
+<p>
+Registrierung des <strong>ping</strong> Kommandos im Server
+</p>
+</li>
+<li>
+<p>
+Callback Funktion für das <strong>ping</strong> Kommando
+</p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_security_module">Security Module</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_allgemein_3">Allgemein</h3>
+<div class="paragraph"><p>Um eine sinnvolle Anbindung an eine Datenbank und die Chatfunktion um
+Rechte zu erweitern wurde das Security Modul entwickelt.
+Das Security Modul führt zwei Arten von Rechten ein:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Globale Rechte
+</p>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Diese Art von Rechten legt fest ob ein User z.B. einen Channel erstellen,
+oder einen Channel löschen kann (das löschen wurde nicht mehr implementiert).
+Also Aktionen ausserhalb der Channel.</tt></pre>
+</div></div>
+</li>
+<li>
+<p>
+Channel Rechte
+</p>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Hier wird festgelegt welche Rechte ein User in einem bestimmten Channel hat.
+Es gibt pro User und Channel ein eigenes Rechtepacket, oder falls nichts in
+der Datenbank hinterlegt ist wird ,je nach Art des Channels, ein Default Packet erstellt.</tt></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+<div class="sect2">
+<h3 id="_verwendete_fremdsoftware_2">Verwendete Fremdsoftware</h3>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="http://search.cpan.org/~mlehmann/AnyEvent-DBI-2.1/DBI.pm">AnyEvent::DBI</a>
+</p>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Ein aus dem CPAN installiertes Modul. Es ermöglicht eine Asynchrone Verbindung
+zur Datenbank aufzubauen. Datenbankoperationen die sehr lange dauern,
+können so nicht den Mainloop blockieren und der Server kann eingehende
+Events schneller verarbeiten.
+Da Perl echte Threads fehlen, startet das AynEvent::DBI Modul kleine Hilfsprozesse,
+die die Queries entgegennehmen und ausführen, ist die Datenbankoperation fertig
+wird im Hauptprogramm ein mitgegebenes Callback ausgeführt.</tt></pre>
+</div></div>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
+<h3 id="_funktionsweise">Funktionsweise</h3>
+<div class="paragraph"><p>Das Security Modul nützt alle Möglichkeiten des Core Servers um ihn zu erweitern.
+Es registriert diverse Befehle und behandelt fast alle Events die der Server
+schickt.
+Nachdem ein User erfolgreiche eine Verbindung zum Server aufgebaut hat,
+bekommt er ein Standard Rechtepacket zugewiesen, das es ihm möglich macht
+eigene Channels zu erstellen.
+Hat er einen Channel erstellt, ist er dort Channel-Admin solange er den Channel
+nicht verlässt, er hat in diesem Channel alle Rechte.
+User die den Channel nur betreten, bekommen ein Standard Channel Rechtepacket,
+sie dürfen den Channel standardmässig betreten und darin sprechen.</p></div>
+<div class="paragraph"><p>Das Security Modul führt aber noch eine weitere Art von Channels ein, sogenannte
+persistente Channel. Diese sind in der Datenbank hinterlegt und werden beim starten
+des Servers automatisch erzeugt.
+Um in einen persistenten Channel betreten zu können benötigt ein User extra Rechte,
+hier wird kein standard Regelpacket erzeugt, hat der User keine Rechte für diesen
+Channel in der Datenbank ist es auch nicht möglich den Channel zu betreten.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_messages_kommandos">Messages / Kommandos</h3>
+<div class="ulist"><ul>
+<li>
+<p>
+<strong>/identify "username" "password"</strong><br />
+  Identifiziert den User beim Security Modul, die globalen
+  Rechte des Users werden aus der DB geladen
+</p>
+</li>
+<li>
+<p>
+<strong>/giveOp "channel" "username"</strong><br />
+  Ein Channeladministrator, hat die Möglichkeit einem
+  anderen User im Channel Administratorenrechte zu geben
+</p>
+</li>
+<li>
+<p>
+<strong>/takeOp "channel" "username"</strong><br />
+  Einen Channeladministrator kann Admin Rechte eines anderen Users
+  entfernen
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_administrations_interface">Administrations-Interface</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_allgemein_4">Allgemein</h3>
+<div class="paragraph"><p>Um die Module und deren Einstellungen ,wie zB die Rechte des Security Moduls, zu verwalten
+wurde ein Webinterface auf Basis von Html, Javascript und Perl-CGI Programmierung entwickelt.
+Als Datenbankbackend kommt natürlich MySQL zum Einsatz.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_fremdsoftware">Fremdsoftware</h3>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="">JSON (2.53) und JSON::XS (2.27)</a>
+</p>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Aus dem CPAN nachinstallierte Module, sie stellen einen Parser und Serializer
+für JSON Dokumente bereit. JSON ist ein leichtgewichtiges Datentransferformat,
+das das Webinterface verwendet um Daten per AJAX vom Server abzuholen.</tt></pre>
+</div></div>
+</li>
+<li>
+<p>
+<a href="">HTML::Template</a>
+</p>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Aus dem CPAN nachinstalliertes Modul, es ermöglicht die strikte Trennung von HTML
+und Perl Code. Zu diesem Zweck wird der HTML Code in sogenannte Template Dateien
+ausgelagert, in denen bestimmte "Tags" hinterlegt sind. Diese "Tags" kann man
+durch dynamische Daten ersetzen.</tt></pre>
+</div></div>
+</li>
+<li>
+<p>
+<a href="http://jquery.com/">JQuery</a>
+</p>
+<div class="literalblock">
+<div class="content">
+<pre><tt>JQuery ist ein Javascript Framework, das es einfach macht Browserübergreifendes
+Javascript zu schreiben, in unserer Software kommmt es hautpsächlich bei
+AJAX-Datenabfragen und beim dymamischen ändern des DOM-Trees zum Einsatz.</tt></pre>
+</div></div>
+</li>
+<li>
+<p>
+<a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a>
+</p>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Bootstrap ist ein Html, Css und Javascript Framework, das vordefinierte Elemente
+liefert, um das Styling und Erstellen von HTML basierten Interfaces zu erleichtern.
+Die komplette Ui des Admin Interfaces wurde mit Bootstrap erstellt.</tt></pre>
+</div></div>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
+<h3 id="_implementation_und_design">Implementation und Design</h3>
+<div class="paragraph"><p>Auch das Admin Interface ist wie der Server modular aufgebaut. Server Module, die
+eine Konfiguration benötigen, die über die Fähigkeiten einer Konfigurationsdatei
+hinausgehen, müssen nur ein Modul/Plugin für das Admin Interface liefern und einige
+bestimmte API Vorgaben erfüllen.</p></div>
+<div class="sect3">
+<h4 id="_application_entry_scripts">Application Entry Scripts</h4>
+<div class="paragraph"><p>Es gibt insgesamt nur 4 Skripte, die der HTTP-Server direkt ausführen kann,
+diese leiten die Requests dann an interne Module weiter oder bearbeiten sie
+direkt selbst:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<strong>login.pl</strong>
+</p>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Ist für Login und das erstellen der Session zuständig, gibt
+es schon eine bestehende Session, wird der Client auf das index.pl
+Script umgeleitet.</tt></pre>
+</div></div>
+</li>
+<li>
+<p>
+<strong>index.pl</strong>
+</p>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Zeigt die Startseite und das Menu an.</tt></pre>
+</div></div>
+</li>
+<li>
+<p>
+<strong>module.pl</strong>
+</p>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Dieses Skript behandelt Requests an die Module -&gt; s.a. Module Funktionsweise</tt></pre>
+</div></div>
+</li>
+<li>
+<p>
+<strong>users.pl</strong>
+</p>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Ist dafür zuständig neue Admin User über die Oberfläche anzulegen und zu verwalten.</tt></pre>
+</div></div>
+</li>
+</ul></div>
+</div>
+<div class="sect3">
+<h4 id="_funktionsweise_von_modulen">Funktionsweise von Modulen</h4>
+<div class="paragraph"><p>Wie schon im vorherigen Abschnitt erwähnt, werden Requests an die Module
+von Application-Entry Skript module.pl gesteuert.
+Hierbei wird vorausgesetzt, das es ein Module gibt das folgende
+Voraussetzungen erfüllt:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Ein Modul im Verzeichnis Pms/Modules/&lt;PluginName&gt; mit dem Namen Mod.pm
+</p>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Für das Security Modul würde das bedeuten: Pms/Modules/Security/Mod.pm</tt></pre>
+</div></div>
+</li>
+<li>
+<p>
+Dieses Module implementiert die Basisklasse Pms::BaseModule
+</p>
+</li>
+<li>
+<p>
+Es wurden alle abstrakten Funktionen implementiert.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Für genauere Informationen wie ein Modul implementiert wird, beachten
+Sie bitte die API Dokumentation.</p></div>
+<div class="paragraph"><p>Es gibt zwei Arten von Requests an ein Modul:
+1. Die Anforderung einer neuen HTML-Seite, also eine View
+2. Ein Datenrequest das per AJAX geschickt wird.</p></div>
+<div class="paragraph"><p>Welche Art von Request durchgeführt wird und an welches Modul
+es geschickt wird, wird per GET Daten in der URL entschieden:</p></div>
+<div class="listingblock">
+<div class="title">URL für eine View</div>
+<div class="content">
+<pre><tt>http://hostname/module.pl?mod=&lt;ModuleName&gt;;view=&lt;ViewName&gt;</tt></pre>
+</div></div>
+<div class="paragraph"><p>Wie man im Beispiel erkennen kann, wird über die <strong>mod</strong> Variable
+die Bezeichnung des Moduls an das module.pl Skript übergeben,
+dieses versucht dann zur Laufzeit das Modul zu laden und
+ruft die Funktion <strong>renderContent($viewName)</strong> auf.
+Diese Funktion sollte den Inhalt der HTML Seite zurückgeben, dieser
+Inhalt wird dann in den Datenbereich des Haupt-Templates eingebettet.</p></div>
+<div class="listingblock">
+<div class="title">URL für einen Daten Request</div>
+<div class="content">
+<pre><tt>http://hostname/module.pl?mod=&lt;ModuleName&gt;;action=&lt;ActionName&gt;</tt></pre>
+</div></div>
+<div class="paragraph"><p>Die Url für einen Daten-Request ist im Aufbau der View-Request
+ähnlich, allerdings hat sie anstatt dem <strong>view</strong> Parameter, einen
+<strong>action</strong> Parameter.
+Das Skript module.pl lädt das Plugin in der gleichen Weise wie
+bei der View, führt hier jedoch die Funktion <strong>dataRequest($actionName)</strong>
+aus. Daten, die an die dataRequest Funktion selbst übergeben werden,
+müssen als JSON-Dokument per POST Request übergeben werden.
+In der aktuellen Konfiguration werden unbekannte GET-Parameter
+einfach ignoriert.</p></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2012-04-25 14:06:37 CEST
+</div>
+</div>
+</body>
+</html>
