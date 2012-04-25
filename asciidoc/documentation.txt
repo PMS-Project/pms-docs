@@ -1,7 +1,7 @@
 = P.M.S Perl - Messaging System =
 Benjamin Zeller, Lukas Michalski , Thorsten Schwalb
-v1.0, 2012-04
 :doctype: book
+:toc:
 :pmsdocs: file:///home/zbenjamin/workspace/pms-project/pms-docs/pms-server
 
 [preface]
@@ -55,13 +55,6 @@ Das Admin Interface wird benötigt, um auf die von Modulen bereitgestellten
 Daten zugreifen zu können, oder diese zu konfigurieren. Die Implementierung 
 erfolgte in Perl, Javascript und Html. 
 
-///////////////////
-- Parser
-- Events
-- Signale
-- Netstring
-- Observer Pattern
-//////////////////
 
 == Implementation, Funktionsweise und Design des Core-Systems ==
 
@@ -69,6 +62,9 @@ erfolgte in Perl, Javascript und Html.
 
 Die komplette Implementation des Cores erfolgte in Perl und wurde als reine 
 objektorienterte, eventbasierte Software konzipiert.
+Der Core ist die zentrale Einheit des P.M.S. es benötigt bis auf
+einen ConnectionProvider keine Erweiterungsmodule um eine Basis Chat Funktionalität
+zu Verfügung zu stellen. 
 
 ==== Verwendete Fremdsoftware im Core: ====
 
@@ -181,6 +177,7 @@ Beim connecten der Signale, wir automatisch in der kompletten Hirarchie des Obje
 eines Signals im PmsEvents Hash gesucht. Somit können auch Signale von übergeordneten Klassen verwendet 
 werden, ohne diese noch einmal im Hash angeben zu müssen.
 
+[[CHAP_EVENTS]]
 === Events ===
 
 Jedes Modul kann sich für bestimmte Server Events registrieren, es hinterlegt dabei eine Callback-Funktionen
@@ -260,7 +257,7 @@ sub _callback{
 }
 ----
 
-=== Konnektivitaet ===
+=== Konnektivit&auml;t ===
 
 ==== Allgemein ====
 
@@ -305,7 +302,6 @@ Chatserver aufbauen.
 
 [NOTE]
 ====
-*NOTE* Bemerkung
 Im Rahmen der Projektarbeit, wurde nur der Chromium Browser getestet.
 ====
 
@@ -385,18 +381,161 @@ Folgende Regeln müssen zutreffen:
 
 Wenn der Parser keinen Fehler findet, wird er einen Hash zurückgeben der 
 den Kommandonamen (das Token nach dem /) und die Argumente als Array 
-beinhält.
+beinhält. Dieses wird dann an das Server-Objekt(Pms::Application) zur weiteren
+Verarbeitung weitergegeben.
 
 === Das Server Object ===
 
 Das Herzstück, das link:[Pms::Application] Modul verbindet die bisher
 beschriebenen Funktionalitäten miteinander. Es sorgt dafür, das die ConnectionProvider
-und Module geladen und initialisiert werden. Und stellt eine API für die Module bereit
-um mit dem Server zu interagieren.
+und Module geladen und initialisiert werden.
 
 Der Server ist ausserdem dafür zuständig, die einzelnen Connections anzunehmen und
-zu verwalten, 
+zu verwalten, Channels zu erstellen und zu löschen und die Messages richtig zu verteilen.
 
+==== Empfang und Abarbeitung von Messages ====
 
+Nachdem, der Server von einer der bestehenden Connections ein dataAvailable Signal
+erhalten ,die Daten ausgelesen und sie wie in den Kapiteln "Line Protokoll" und
+"Chat und Message Protokoll" verarbeitet hat, liegt ein Hash mit folgendem Aufbau vor:
 
+[source,perl]
+----
+(
+  name => "Kommandoname",
+  args => [
+    arg0,
+    arg1,
+    #,....,
+    argn
+  ]
+);
+----
 
+Der Server sucht nun in einem internen Hash, ob ein Callback für dieses Kommando 
+hinterlegt wurde, und führt es aus. Als Parameter für den Callback wird immer 
+als erstes Argument das Connection Objekt übergeben, das das Kommando ausführt, 
+danach das Array mit den Argumenten aus dem Hash. 
+
+===== Default Messages/Kommandos =====
+
+Der Core Server kommt von Haus aus mit einigen vordefinierten Kommandos:
+
+- */send "channel" "message"* +
+  Eine Chatmessage, die an einen Channel geschickt wird
+- */join "channel"* +
+  Einen Channel betreten
+- */leave "channel"* +
+  Einen Channel verlassen
+- */create "channel"* +
+  Einen neuen Channel erstellen
+- */list* +
+  Eine Liste von bestehenden Channeln abfragen
+- */nick "newname"* +
+  Den eigenen Usernamen ändern
+- */users* +
+  Eine Liste von Usern erhalten (internes Kommando)
+- */topic "channel" "topic"* +
+  Die Überschrift/ das Thema eines Channels ändern
+  
+==== Erweiterungs API f&uuml;r Module ====
+
+Eine weitere wichtige Aufgabe, ist die Bereitstellung einer API für die Erweiterung
+durch Module. Dazu gehören nicht nur die Events, die durch die Module beinflusst werden
+können, sondern auch eine Möglichkeit eigene "Chat-Kommandos" zu registrieren,
+die vom User oder der Clientapplikation aufgerufen werden können.
+Ein Modul muss dazu nur ein Kommando mit einer dazugehörigen Callback-Funktion 
+registrieren, den Rest macht das Server Objekt von alleine:
+
+[source,perl]
+----
+sub createCommands{
+  my $self = shift;
+  my $srv  = shift; #Das Server Objekt
+  
+  $srv->registerCommand("ping",$self->_pingCallback());
+}
+
+sub _pingCallback{
+  my $self = shift;
+  return sub{
+    my $connection = shift;
+    $connection->postMessage(Pms::Prot::Messages::serverMessage("default","Pong"));
+  }
+}
+----
+
+Führt der User jetzt das Kommando */ping* aus, wird der Server im "default" footnote:[Der default Channel ist das Hauptfenster in dem der Serverprozess Nachrichten schickt] Channel mit "Pong"
+antworten.
+
+Das verarbeiten und stoppen von Events wurde im Kapitel <<CHAP_EVENTS,Events>> schon beschrieben.
+Eigene Events zu registrieren ist jedoch nicht möglich,allerdings kann über das *execute_command_request* 
+Event die Ausführung eines von einem Modul registrierten Kommandos beinflusst werden.
+
+==== Laden der Module ====
+
+Das Server Objekt, lädt die Module zur Laufzeit, welche Module der Server lädt, in welcher Reihenfolge
+und welche Abhängigkeiten die Module untereinander haben, werden in der Server Konfigurationsdatei 
+hinterlegt.
+Initialisierung und Shutdown der Module muss in den Konstruktor und Destruktor Funktionen durchgeführt
+werden, ansonsten werden keine Anforderungen an die API der Module erstellt. Der Server übergibt als erstes
+Argument an den Konstruktor immer eine Referenz auf sich selbst und als zweites Argument den Konfigurationshash
+des Moduls, dieser wird aus der Konfigurationsdatei gelesen.
+
+.Beispiel-Modul
+[source,perl]
+----------------------------------------------------------------
+#!/usr/bin/perl -w
+
+package Pms::Modules::Ping;
+
+use strict;
+use Pms::Application;
+use Pms::Prot::Messages;
+
+sub new{
+  my $class = shift;
+  my $self  = {};
+  bless ($self, $class);
+  
+  $self->{m_parent} = shift;    <1>
+  $self->{m_config} = shift;    <2>    
+  $self->createCommands();
+  
+  return $self;
+}
+
+sub DESTROY{
+  my $self = shift;
+  $self->shutdown();
+}
+
+sub createCommands{
+  my $self = shift;
+  my $srv  = shift; #Das Server Objekt
+  
+  $srv->registerCommand("ping",$self->_pingCallback()); <3>
+}
+
+sub _pingCallback{      <4>
+  my $self = shift;
+  return sub{
+    my $connection = shift;
+    $connection->postMessage(
+      Pms::Prot::Messages::serverMessage("default","Pong")
+    );
+  }
+}
+
+sub shutdown{
+  my $self = shift;
+  warn "Shutting Down";
+}
+
+1;
+----------------------------------------------------------------
+
+<1> Das ServerObjekt ist immer der erste Parameter
+<2> Der Konfigurationshash des Moduls
+<3> Registrierung des *ping* Kommandos im Server
+<4> Callback Funktion für das *ping* Kommando
