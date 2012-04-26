@@ -748,13 +748,19 @@ asciidoc.install(2);
 <div class="sect1">
 <h2 id="_einleitung">Einleitung</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_aufgabenstellung">Aufgabenstellung</h3>
+<div class="paragraph"><p>Im Rahmen der Technickerausbildung im Schuljahr 2011/12 in der Klasse
+ITT 7/8 wurde die Aufgabe gestellt, eine in Perl realisierte Anwendung
+mit Datenbankanbindung zu planen, entwickeln und vorzustellen.
+Als Thema der Projektarbeit haben wir uns das Perl-Messaging-System, kurz
+P.M.S. ,einen Chatserver mit Client und Administrationsinterface, ausgesucht.</p></div>
 <div class="paragraph"><p>Dieses Dokument beschreibt die Funktionsweise und Implementation
 des Perl Messaging Systems, also den Core-Server, die Erweiterung durch
-Module, das Admin Interface und den Chat Client.
-Die Implementation und Entwicklung dieser Software erfolgte im Rahmen
-der Technikerausbildung im Schuljahr 2011/12 in der Klasse ITT7/8.</p></div>
+Module, das Admin Interface und den Chat Client.</p></div>
 <div class="paragraph"><p>Die Arbeiten an der Software wurden gemeinschaftlich von Lukas Michalski,
 Benjamin Zeller und Thorsten Schwalb durchgeführt.</p></div>
+</div>
 <div class="sect2">
 <h3 id="_zielsetzung_core_system">Zielsetzung Core-System</h3>
 <div class="paragraph"><p>Das meisste Augenmerk lag hierbei auf dem Herzstück des PMS , dem Core.</p></div>
@@ -1333,7 +1339,7 @@ Chatserver aufbauen.</p></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
-<div class="title">Note</div>
+<img src="./images/icons/note.png" alt="Note" />
 </td>
 <td class="content">
 <div class="paragraph"><p>Im Rahmen der Projektarbeit, wurde nur der Chromium Browser getestet.</p></div>
@@ -1623,8 +1629,8 @@ http://www.gnu.org/software/src-highlite -->
   <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$self</span>  <span style="color: #990000">=</span> <span style="color: #FF0000">{}</span><span style="color: #990000">;</span>
   <span style="font-weight: bold"><span style="color: #0000FF">bless</span></span> <span style="color: #990000">(</span><span style="color: #009900">$self</span><span style="color: #990000">,</span> <span style="color: #009900">$class</span><span style="color: #990000">);</span>
 
-  <span style="color: #009900">$self</span><span style="color: #990000">-&gt;</span><span style="color: #FF0000">{</span>m_parent<span style="color: #FF0000">}</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>    <span style="color: #FF0000"><b>&lt;1&gt;</b></span>
-  <span style="color: #009900">$self</span><span style="color: #990000">-&gt;</span><span style="color: #FF0000">{</span>m_config<span style="color: #FF0000">}</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>    <span style="color: #FF0000"><b>&lt;2&gt;</b></span>
+  <span style="color: #009900">$self</span><span style="color: #990000">-&gt;</span><span style="color: #FF0000">{</span>m_parent<span style="color: #FF0000">}</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>    <span style="color: #FF0000"><img src="./images/icons/callouts/1.png" alt="1" /></span>
+  <span style="color: #009900">$self</span><span style="color: #990000">-&gt;</span><span style="color: #FF0000">{</span>m_config<span style="color: #FF0000">}</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>    <span style="color: #FF0000"><img src="./images/icons/callouts/2.png" alt="2" /></span>
   <span style="color: #009900">$self</span><span style="color: #990000">-&gt;</span><span style="font-weight: bold"><span style="color: #000000">createCommands</span></span><span style="color: #990000">();</span>
 
   <span style="font-weight: bold"><span style="color: #0000FF">return</span></span> <span style="color: #009900">$self</span><span style="color: #990000">;</span>
@@ -1639,10 +1645,10 @@ http://www.gnu.org/software/src-highlite -->
   <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$self</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>
   <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$srv</span>  <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span> <span style="font-style: italic"><span style="color: #9A1900">#Das Server Objekt</span></span>
 
-  <span style="color: #009900">$srv</span><span style="color: #990000">-&gt;</span><span style="font-weight: bold"><span style="color: #000000">registerCommand</span></span><span style="color: #990000">(</span><span style="color: #FF0000">"ping"</span><span style="color: #990000">,</span><span style="color: #009900">$self</span><span style="color: #990000">-&gt;</span><span style="font-weight: bold"><span style="color: #000000">_pingCallback</span></span><span style="color: #990000">());</span> <span style="color: #FF0000"><b>&lt;3&gt;</b></span>
+  <span style="color: #009900">$srv</span><span style="color: #990000">-&gt;</span><span style="font-weight: bold"><span style="color: #000000">registerCommand</span></span><span style="color: #990000">(</span><span style="color: #FF0000">"ping"</span><span style="color: #990000">,</span><span style="color: #009900">$self</span><span style="color: #990000">-&gt;</span><span style="font-weight: bold"><span style="color: #000000">_pingCallback</span></span><span style="color: #990000">());</span> <span style="color: #FF0000"><img src="./images/icons/callouts/3.png" alt="3" /></span>
 <span style="color: #FF0000">}</span>
 
-<span style="font-weight: bold"><span style="color: #0000FF">sub</span></span> _pingCallback<span style="color: #FF0000">{</span>      <span style="color: #FF0000"><b>&lt;4&gt;</b></span>
+<span style="font-weight: bold"><span style="color: #0000FF">sub</span></span> _pingCallback<span style="color: #FF0000">{</span>      <span style="color: #FF0000"><img src="./images/icons/callouts/4.png" alt="4" /></span>
   <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$self</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>
   <span style="font-weight: bold"><span style="color: #0000FF">return</span></span> <span style="font-weight: bold"><span style="color: #0000FF">sub</span></span><span style="color: #FF0000">{</span>
     <span style="font-weight: bold"><span style="color: #0000FF">my</span></span> <span style="color: #009900">$connection</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">shift</span></span><span style="color: #990000">;</span>
@@ -1658,28 +1664,20 @@ http://www.gnu.org/software/src-highlite -->
 <span style="color: #FF0000">}</span>
 
 <span style="color: #993399">1</span><span style="color: #990000">;</span></tt></pre></div></div>
-<div class="colist arabic"><ol>
-<li>
-<p>
+<div class="colist arabic"><table>
+<tr><td><img src="./images/icons/callouts/1.png" alt="1" /></td><td>
 Das ServerObjekt ist immer der erste Parameter
-</p>
-</li>
-<li>
-<p>
+</td></tr>
+<tr><td><img src="./images/icons/callouts/2.png" alt="2" /></td><td>
 Der Konfigurationshash des Moduls
-</p>
-</li>
-<li>
-<p>
+</td></tr>
+<tr><td><img src="./images/icons/callouts/3.png" alt="3" /></td><td>
 Registrierung des <strong>ping</strong> Kommandos im Server
-</p>
-</li>
-<li>
-<p>
+</td></tr>
+<tr><td><img src="./images/icons/callouts/4.png" alt="4" /></td><td>
 Callback Funktion für das <strong>ping</strong> Kommando
-</p>
-</li>
-</ol></div>
+</td></tr>
+</table></div>
 </div>
 </div>
 </div>
@@ -1968,7 +1966,7 @@ einfach ignoriert.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2012-04-25 23:59:51 CEST
+Last updated 2012-04-26 10:43:49 CEST
 </div>
 </div>
 </body>

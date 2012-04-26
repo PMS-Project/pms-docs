@@ -7,11 +7,17 @@ Benjamin Zeller, Lukas Michalski , Thorsten Schwalb
 [preface]
 == Einleitung ==
 
+=== Aufgabenstellung ===
+
+Im Rahmen der Technickerausbildung im Schuljahr 2011/12 in der Klasse 
+ITT 7/8 wurde die Aufgabe gestellt, eine in Perl realisierte Anwendung
+mit Datenbankanbindung zu planen, entwickeln und vorzustellen.
+Als Thema der Projektarbeit haben wir uns das Perl-Messaging-System, kurz
+P.M.S. ,einen Chatserver mit Client und Administrationsinterface, ausgesucht.
+
 Dieses Dokument beschreibt die Funktionsweise und Implementation
 des Perl Messaging Systems, also den Core-Server, die Erweiterung durch 
 Module, das Admin Interface und den Chat Client.
-Die Implementation und Entwicklung dieser Software erfolgte im Rahmen 
-der Technikerausbildung im Schuljahr 2011/12 in der Klasse ITT7/8.
 
 Die Arbeiten an der Software wurden gemeinschaftlich von Lukas Michalski,
 Benjamin Zeller und Thorsten Schwalb durchgeführt.
@@ -703,7 +709,7 @@ Als Datenbankbackend kommt natürlich MySQL zum Einsatz.
 
 === Aufbau des Source Codes ===
 
-image:source-tree.png["Ordner Struktur"]
+image:source-tree.png["Ordner Struktur",scale]
     
 === Fremdsoftware ===
 
