@@ -1,0 +1,93 @@
+Format: 1.52
+
+
+# You can add a title and sub-title to your menu like this:
+# Title: [project name]
+# SubTitle: [subtitle]
+
+# You can add a footer to your documentation like this:
+# Footer: [text]
+# If you want to add a copyright notice, this would be the place to do it.
+
+# You can add a timestamp to your documentation like one of these:
+# Timestamp: Generated on month day, year
+# Timestamp: Updated mm/dd/yyyy
+# Timestamp: Last updated mon day
+#
+#   m     - One or two digit month.  January is "1"
+#   mm    - Always two digit month.  January is "01"
+#   mon   - Short month word.  January is "Jan"
+#   month - Long month word.  January is "January"
+#   d     - One or two digit day.  1 is "1"
+#   dd    - Always two digit day.  1 is "01"
+#   day   - Day with letter extension.  1 is "1st"
+#   yy    - Two digit year.  2006 is "06"
+#   yyyy  - Four digit year.  2006 is "2006"
+#   year  - Four digit year.  2006 is "2006"
+
+
+# --------------------------------------------------------------------------
+# 
+# Cut and paste the lines below to change the order in which your files
+# appear on the menu.  Don't worry about adding or removing files, Natural
+# Docs will take care of that.
+# 
+# You can further organize the menu by grouping the entries.  Add a
+# "Group: [name] {" line to start a group, and add a "}" to end it.
+# 
+# You can add text and web links to the menu by adding "Text: [text]" and
+# "Link: [name] ([URL])" lines, respectively.
+# 
+# The formatting and comments are auto-generated, so don't worry about
+# neatness when editing the file.  Natural Docs will clean it up the next
+# time it is run.  When working with groups, just deal with the braces and
+# forget about the indentation and comments.
+# 
+# --------------------------------------------------------------------------
+
+
+File: index.pl  (index.pl)
+File: login.pl  (login.pl)
+File: module.pl  (module.pl)
+
+Group: Pms  {
+
+   File: BaseModule  (Pms/BaseModule.pm)
+   File: MainView  (Pms/MainView.pm)
+
+   Group: Modules  {
+
+      File: Channel  (Pms/Modules/Security/Channel.pm)
+      File: ChannelRoles  (Pms/Modules/Security/ChannelRoles.pm)
+      File: Mod  (Pms/Modules/Security/Mod.pm)
+      File: User  (Pms/Modules/Security/User.pm)
+      File: UserRoles  (Pms/Modules/Security/UserRoles.pm)
+      }  # Group: Modules
+
+   File: Session  (Pms/Session.pm)
+   File: UserView  (Pms/UserView.pm)
+   }  # Group: Pms
+
+File: PmsConfig  (PmsConfig.pm)
+File: users.pl  (users.pl)
+
+Group: Test  {
+
+   File: admin.cgi  (Test/cgi-bin/admin.cgi)
+   File: admin_session.cgi  (Test/cgi-bin/admin_session.cgi)
+   File: admin2.cgi  (Test/cgi-bin/admin2.cgi)
+   File: admin3.cgi  (Test/cgi-bin/admin3.cgi)
+   File: bootstrap_admin_session.cgi  (Test/cgi-bin/bootstrap_admin_session.cgi)
+   File: fill_database.pl  (Test/cgi-bin/fill_database.pl)
+   File: test.cgi  (Test/cgi-bin/test.cgi)
+   }  # Group: Test
+
+Group: Index  {
+
+   Index: Everything
+   Class Index: Classes
+   File Index: Files
+   Function Index: Functions
+   Variable Index: Variables
+   }  # Group: Index
+
