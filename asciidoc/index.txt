@@ -818,6 +818,473 @@ müssen als JSON-Dokument per POST Request übergeben werden.
 In der aktuellen Konfiguration werden unbekannte GET-Parameter
 einfach ignoriert.
   
+image:adminWindow.png["Chat Fenster",scale]
   
+== Graphische Benutzeroberfläche ==
+
+=== Allgemein ===
+Damit Benutzer über den Core miteinander kommunizieren können, wurde 
+dieser Chat Client entwickelt.
+
+     
+=== Fremdsoftware ===
+
+- link:http://www.qooxdoo.org/[Qooxdoo JavaScript Framework SDK v1.6]
++
+  qooxdoo ist ein clientseitiges Framework für den Bau grafischer 
+  Benutzeroberflächen für Webanwendungen mit Hilfe des Programmierkonzepts 
+  Ajax. qooxdoo ist ein Rahmenwerk für die Entwicklung von Anwendungen, 
+  die der Benutzer über seinen Webbrowser aufruft und bedient. Es stellt 
+  in einer Programmbibliothek zahlreiche auf der Skriptsprache JavaScript 
+  basierende Komponenten zur Verfügung, die Aussehen und Bedienung von 
+  Webanwendungen an klassische Desktop-Anwendungen angleichen. Dabei 
+  verwendet es das Programmierkonzept Ajax, das es erlaubt, Benutzer-
+  eingaben zu verarbeiten, ohne die gesamte Webseite neu zu laden.
   
+=== Implementation und Design ===
+Die komplette Implementation erfolgte in Javascript und als Framework wurde 
+Qooxdoo verwendet. Es wurden alle Commands und Messages des Server 
+implementiert.
+
+Genauere Implementationsdetails des Chatclients werden in diesem Dokument
+nicht weiter behandelt, da die graphische Oberfläche in JavaScript entwickelt 
+wurde und nicht Gegenstand des Unterrichtes ist.
+
+image:chatWindow.png["Chat Fenster",scale]
+
+== Systemvoraussetzungen ==
+
+=== Allgemein ===
+Um diese Software nutzen zu können, müssen diverse Voraussetzungen erfüllt sein.
+Im weiteren wird ein System beschrieben, welches erfolgreich getestet wurde.
+
+=== Core - System ===
+
+Betriebssystem: ArchLinux x64
+
+- Repositories: core-remote
+- Paketauswahl: base, standard
+
+
+==== Zu installierende Pakete ====
+- base-devel +
+    ( pacman -S base-devel ) ( all )
+- openssh +
+    ( pacman -S openssh ) 
+- git +
+    ( pacman -S git ) 
+- mysql +
+    ( pacman -S mysql )
+- perl-dbd-mysql +
+    ( pacman -S perl-dbd-mysql )
+
+==== Perl Pakete ====
+- AnyEvent
+- AnyEvent::DBI
+- Object::Event
+- Protocol::WebSocket
+
+==== Quellen ====
+- git://gitorious.org/p-ms/pms-server.git
+
+----
+[/srv/project]$ git clone git://gitorious.org/p-ms/pms-server.git
+----
+
+==== Datenbank ====
+
+- MySQL DB anlegen
+----
+  - mysql -u root -p
+    Enter password:
+    
+    mysql> create database pms;
+    Query OK, 1 row affected (0.00 sec)
+
+    mysql> grant usage on *.* to pms@localhost identified by 'pass';
+    Query OK, 0 rows affected (0.00 sec)
+
+    mysql> grant all privileges on pms.* to pms@localhost;
+    Query OK, 0 rows affected (0.00 sec)
+----
+- MySQL Dump importieren
+
+- PmsConfig.pm konfigurieren +
+  Bereich *%baseDBHash* einrichten
+
+=== Admin - Interface ===
+
+==== Zu installierende Pakete ====
+- lighttpd +
+  (pacman -S lighttpd)
+
+==== Perl Pakete ====
+- HTML::Template
+- CGI::Session
+- JSON
+
+==== Quellen ====
+- git://gitorious.org/p-ms/pms-admin.git
+
+----
+[/srv/project]$ git clone git://gitorious.org/p-ms/pms-admin.git
+----
+==== Datenbank ====
+- PmsConfig.pm konfigurieren
+
+==== HTTP-Server ====
+- Konfiguration des Servers +
+  ( nano /etc/lighttpd/lighttpd.conf )
+
+----
+server.port             = 80
+server.username         = "http"
+server.groupname        = "http"
+server.document-root    = "/srv/http"
+server.errorlog         = "/var/log/lighttpd/error.log"
+dir-listing.activate    = "enable"
+index-file.names        = ( "index.html", "login.pl" )
+mimetype.assign         = ( ".html" => "text/html", 
+                            ".txt" => "text/plain", 
+                            ".jpg" => "image/jpeg", 
+                            ".png" => "image/png", 
+                            ".css" => "text/css", 
+                            ".js" => "text/javascript", 
+                            "" => "text/html" 
+                          )
+
+server.modules = ( "mod_cgi" )
+
+$HTTP["url"] =~ "^/pms-admin/" {
+        cgi.assign = ( ".pl" => "/usr/bin/perl" )
+}
+----
+
+- Standardbenutzer: 
+* luggi
+* zbenjamin
+- Standardpasswort:
+* passwort
+
+=== HTML5 - Chat Client ===
+
+==== Zu installierende Pakete ====
+- unzip +
+  ( packer -S unzip )
+- python2 +
+  ( packer -S python2 )
+
+==== Quellen ====
+- git://gitorious.org/p-ms/pms-webclient-qx.git
+
+----
+[/srv/project]$ git clone git://gitorious.org/p-ms/pms-webclient-qx.git
+----
+
+==== Framework ====
+- Installation vom Qooxdoo Framework
+----
+[/srv/packages]$ wget http://downloads.sourceforge.net/qooxdoo/qooxdoo-1.6-sdk.zip
+
+[/srv/packages]$ unzip qooxdoo-1.6-sdk.zip
+
+[/srv/packages]$ mv qooxdoo-1.6-sdk /opt/
+
+[/srv/packages]$ cd /srv/project
+
+[/srv/project]$ mkdir qooxdoo
+
+[/srv/project]$ cd qooxdoo
+
+[/srv/project/qooxdoo]$ python2 /opt/qooxdoo-1.6-sdk/tool/bin/create-application.py \
+                      > --name=pms --out=.
+
+[/srv/project/qooxdoo]$ cp /srv/project/pms-webclient-qx/*.js \
+                      > /srv/project/qooxdoo/pms/source/class/pms/
+                      
+[/srv/project/qooxdoo]$ cp /srv/project/pms-webclient-qx/images/logo_pms.png \
+                      >/srv/project/qooxdoo/pms/source/resource/pms
+                      
+[/srv/project/qooxdoo]$ cd pms
+
+[/srv/project/qooxdoo/pms]$ python2 generate.py build
+
+[/srv/project/qooxdoo/pms]$ cd /srv/http/
+
+[/srv/http]$ ln -s /srv/project/qooxdoo/pms/build/ pms_admin
+----
+
+== Probleme ==
+
+=== Datenbank ===
+- Probleme mit Stored Procedures mit MySQL Version < 5.5
   
+== Logbücher ==
+
+=== Logbuch Core-System (git) ===
+
+[options="header"]
+|=======
+| Name            | Date                           | Comment
+| Lukas Michalski | Thu Apr 26 21:09:00 2012 |  Adding comment templates
+| Benjamin Zeller | Thu Apr 26 19:26:11 2012 |  Stored Procedures
+| Benjamin Zeller | Thu Apr 26 19:25:58 2012 |  Stored Procedures
+| Benjamin Zeller | Tue Apr 24 00:59:35 2012 |  Empty message and message with just 0
+| Benjamin Zeller | Tue Apr 24 00:41:34 2012 |  Less output
+| Benjamin Zeller | Tue Apr 24 00:38:05 2012 |  Bugs
+| Benjamin Zeller | Mon Apr 23 23:32:01 2012 |  Restructured Security Module, added a own UserInfo for rights n stuff
+| Benjamin Zeller | Mon Apr 23 01:33:41 2012 |  Adding takeOp command, About to split Security.pm in seperate Modules
+| Benjamin Zeller | Mon Apr 23 00:59:01 2012 |  Introducing showRights and giveOp commands
+| Benjamin Zeller | Mon Apr 23 00:04:32 2012 |  Remove Verbose Output from Backlog.pm
+| Benjamin Zeller | Sat Apr 21 13:18:37 2012 |  Utf-8 is a bitch
+| Benjamin Zeller | Sat Apr 21 11:22:21 2012 |  Backlog Module
+| Benjamin Zeller | Sat Apr 21 09:44:09 2012 |  Use mysql reconnect
+| Benjamin Zeller | Fri Apr 20 23:42:01 2012 |  Bugs
+| PMS Development Server | Fri Apr 20 23:28:31 2012 |  Bugs
+| Benjamin Zeller | Fri Apr 20 23:08:13 2012 |  Bugs
+| Benjamin Zeller | Fri Apr 20 23:02:56 2012 |  Wrong Nick Change
+| Benjamin Zeller | Fri Apr 20 22:47:26 2012 |  Merge branch 'master' of gitorious.org:p-ms/pms-server
+| Benjamin Zeller | Fri Apr 20 22:47:07 2012 |  Bugs
+| PMS Development Server | Fri Apr 20 22:36:23 2012 |  Bugs
+| Benjamin Zeller | Fri Apr 20 22:31:29 2012 |  Send disconnect event
+| Benjamin Zeller | Fri Apr 20 22:22:41 2012 |  Disconnect Handling in security module
+| PMS Development Server | Fri Apr 20 22:17:36 2012 |  Bugs
+| Benjamin Zeller | Fri Apr 20 17:04:06 2012 |  Bugs
+| Benjamin Zeller | Fri Apr 20 16:17:53 2012 |  Bugs
+| Benjamin Zeller | Fri Apr 20 01:58:00 2012 |  Initial Information about the Users Nick
+| Benjamin Zeller | Fri Apr 20 00:06:57 2012 |  Fixed some bugs, send a userlist when someone joins a channel
+| Benjamin Zeller | Wed Apr 18 22:46:10 2012 |  Basic Security Stuff seems to work
+| Benjamin Zeller | Tue Apr 17 00:36:54 2012 |  Send nickchange from the right place
+| Benjamin Zeller | Tue Apr 17 00:03:24 2012 |  Send nickchange just once
+| Benjamin Zeller | Mon Apr 16 20:26:17 2012 |  Bug In Message Packet
+| Benjamin Zeller | Mon Apr 16 10:37:24 2012 |  send userlist message
+| Benjamin Zeller | Mon Apr 16 10:29:38 2012 |  Sending new Messages, Added a way to change the topic
+| Benjamin Zeller | Sun Apr 15 01:23:24 2012 |  Commited test code, reversed
+| Benjamin Zeller | Sun Apr 15 01:22:43 2012 |  Ok exit can not print a message, reversed to die
+| Benjamin Zeller | Sun Apr 15 01:12:57 2012 |  Use exit in case of wrong arguments, noone should be able to catch th
+| Benjamin Zeller | Sun Apr 15 00:26:17 2012 |  Fixing a bug
+| Benjamin Zeller | Sun Apr 15 00:23:33 2012 |  Adding a config file
+| Benjamin Zeller | Sat Apr 14 23:06:16 2012 |  possible userrights structure
+| Benjamin Zeller | Sat Apr 14 22:11:02 2012 |  Removed unused Prototypes, connect to DB and query usernames and pass
+| Benjamin Zeller | Sat Apr 14 20:50:17 2012 |  Use FQN for Modules
+| Benjamin Zeller | Fri Apr 13 00:51:57 2012 |  fixed bug
+| Benjamin Zeller | Fri Apr 13 00:50:44 2012 |  Message generating packet
+| Benjamin Zeller | Thu Apr 12 21:31:38 2012 |  Refactoring file structure of the Websocket ConnectionProvider code, 
+| Benjamin Zeller | Mon Apr 9 23:18:36 2012 |  Introducing the users command, a way to list users
+| Benjamin Zeller | Mon Apr 9 22:52:04 2012 |  Working on some global API, created a basic security module, fixed som
+| Benjamin Zeller | Wed Mar 28 20:38:55 2012 |  Added handling when a Websocket closes and its still in the handshake
+| Benjamin Zeller | Wed Mar 28 20:30:44 2012 |  More Debug checks for debug messages
+| Benjamin Zeller | Wed Mar 28 20:08:48 2012 |  Handling the Websocket Netstring correctly, basic events are sent now
+| Benjamin Zeller | Wed Mar 28 18:44:14 2012 |  Merge branch 'master' of gitorious.org:p-ms/pms-server
+| Benjamin Zeller | Wed Mar 28 18:43:50 2012 |  Renaming of signals
+| Lukas Michalski | Wed Mar 28 18:05:51 2012 |  Changing /list command
+| Benjamin Zeller | Tue Mar 27 23:52:54 2012 |  stuff
+| Benjamin Zeller | Tue Mar 27 23:24:40 2012 |  implemented /nick , removed some wrong error handling
+| Benjamin Zeller | Mon Mar 26 20:48:01 2012 |  Handle Client disconnects, send messages only to the connections that
+| Benjamin Zeller | Sun Mar 25 22:02:44 2012 |  Fixed commit error
+| Benjamin Zeller | Sun Mar 25 21:59:11 2012 |  Automatic username stuff
+| Lukas Michalski | Sun Mar 25 12:29:28 2012 |  Removing unused lines
+| Lukas Michalski | Sun Mar 25 12:25:00 2012 |  Adding some checks and a new command called /list
+| Benjamin Zeller | Sat Mar 24 10:50:06 2012 |  Introducing createChannel command, sending Events for client actions,
+| Benjamin Zeller | Wed Mar 21 18:23:06 2012 |  Added non quoted strings to the parser
+| Benjamin Zeller | Mon Mar 12 20:45:33 2012 |  Refactoring, intitial protocol handling
+| Benjamin Zeller | Thu Mar 8 00:59:14 2012 |  Replaced all complex class members with references, basic communicatio
+| Benjamin Zeller | Wed Mar 7 19:31:32 2012 |  Lots of refactoring, Introducing the abstract for Connections and Conn
+| Benjamin Zeller | Mon Feb 27 18:33:24 2012 |  added comments to Parser.pm
+| Benjamin Zeller | Wed Feb 15 18:39:06 2012 |  Netstring implementation works
+| Benjamin Zeller | Mon Feb 13 19:28:04 2012 |  Parser works
+| Benjamin Zeller | Sat Feb 11 11:17:03 2012 |  First Parser code, not tested
+| Benjamin Zeller | Sat Feb 11 09:18:57 2012 |  Restructuring
+| Benjamin Zeller | Fri Feb 10 00:33:56 2012 |  Trivial websocket communication seems to work
+| Benjamin Zeller | Wed Feb 8 09:43:39 2012 |  resolved conflict
+| Benjamin Zeller | Wed Feb 8 09:37:44 2012 |  Restuctured, added some Event classes, testcode to reject events
+| Lukas Michalski | Tue Feb 7 00:29:21 2012 |  Laden mehrerer Module nicht moeglich.
+| Benjamin Zeller | Mon Feb 6 20:56:38 2012 |  Basic Module loading implemented
+| Benjamin Zeller | Mon Feb 6 20:20:56 2012 |  untabify
+| Lukas Michalski | Mon Feb 6 20:07:42 2012 |  Merge branch 'master' of gitorious.org:p-ms/pms-server
+| Lukas Michalski | Mon Feb 6 20:06:54 2012 |  changing .gitignore
+| Benjamin Zeller | Mon Feb 6 20:05:31 2012 |  Getting rid of EventHandler
+| Benjamin Zeller | Mon Feb 6 20:04:35 2012 |  Removed Testcode
+| Benjamin Zeller | Mon Feb 6 20:02:19 2012 |  Basic Module Structure, use strict
+| Benjamin Zeller | Mon Feb 6 19:35:03 2012 |  Basic Application Class
+|=======
+
+=== Logbuch Admin-Interface (git) ===
+
+[options="header"]
+|=======
+| Name            | Date                           | Comment
+| Benjamin Zeller | Wed Apr 25 16:42:16 2012 |  Last Changes, Feature Freeeze
+| Benjamin Zeller | Sat Apr 21 10:36:31 2012 |  Merge branch 'master' of gitorious.org:p-ms/pms-admin
+| Benjamin Zeller | Sat Apr 21 10:36:14 2012 |  Add Page to manage pms-admins
+| Benjamin Zeller | Sat Apr 21 00:01:14 2012 |  Docs belongs in DOCS
+| Thorsten Schwalb | Fri Apr 20 22:49:47 2012 |  Merge branch 'master' of gitorious.org:p-ms/pms-admin
+| Thorsten Schwalb | Fri Apr 20 22:48:25 2012 |  Erster Entwurf
+| Benjamin Zeller | Tue Apr 17 20:34:32 2012 |  Finished functionality of Security Admin module
+| Benjamin Zeller | Tue Apr 17 14:42:23 2012 |  Add and remove Users completely works
+| Benjamin Zeller | Tue Apr 17 01:00:37 2012 |  Add,Remove,Edit users works
+| Benjamin Zeller | Mon Apr 16 14:46:26 2012 |  loading users per ajax, show a busy indicator
+| Benjamin Zeller | Mon Apr 16 00:24:56 2012 |  Creating a Path for AJAX
+| Benjamin Zeller | Sun Apr 15 23:17:33 2012 |  Did not use html5 doctype
+| Benjamin Zeller | Sun Apr 15 21:48:28 2012 |  Loading Users from the database
+| Benjamin Zeller | Sun Apr 15 21:24:12 2012 |  Usermod page
+| Benjamin Zeller | Sun Apr 15 20:58:07 2012 |  Shaping out modularization
+| Benjamin Zeller | Sun Apr 15 18:24:15 2012 |  Working on modulaization
+| Benjamin Zeller | Sun Apr 15 16:02:05 2012 |  Merged
+| Benjamin Zeller | Sun Apr 15 16:00:50 2012 |  Merge branch 'master' of gitorious.org:p-ms/pms-admin
+| Benjamin Zeller | Sun Apr 15 16:00:31 2012 |  Structuring and templating
+| Thorsten Schwalb | Sun Apr 15 13:52:45 2012 |  Sql
+| Thorsten Schwalb | Sun Apr 15 12:55:20 2012 |  Import Work
+| unknown | Sun Apr 8 21:33:35 2012 |  Iinitial Import
+| unknown | Sun Apr 8 21:32:59 2012 |  Iinitial Import
+| Lukas Michalski | Wed Feb 29 17:10:22 2012 |  Initial commit
+|=======
+
+=== Logbuch HTML5 - Chat Client (Qooxdoo) (git) ===
+
+[options="header"]
+|=======
+| Name            | Date                           | Comment
+| Lukas Michalski | Fri Apr 27 00:53:36 2012 |  smaller logo
+| Lukas | Thu Apr 26 16:51:59 2012 |  Adding ignoreCommand
+| Lukas Michalski | Tue Apr 24 21:23:16 2012 |  Some changes and other colors
+| Lukas Michalski | Tue Apr 24 02:00:14 2012 |  routing serverMessages to activeTab
+| Lukas Michalski | Tue Apr 24 01:40:16 2012 |  New Comments, restructure, bugs
+| Lukas Michalski | Tue Apr 24 00:50:23 2012 |  Removing comments
+| Lukas Michalski | Tue Apr 24 00:45:04 2012 |  Outsource message and fix some bugs
+| Lukas Michalski | Mon Apr 23 21:05:00 2012 |  Fixing tab problem and bug fixing
+| Lukas Michalski | Sun Apr 22 23:26:21 2012 |  Bug fixing, HtmlWidget now works and scroll down properly
+| Lukas Michalski | Sat Apr 21 19:01:12 2012 |  Redesign
+| Lukas Michalski | Fri Apr 20 23:40:43 2012 |  Bug fixing
+| Lukas Michalski | Fri Apr 20 22:46:58 2012 |  UserList
+| Lukas Michalski | Fri Apr 20 22:20:56 2012 |  Bugs fixed
+| Lukas Michalski | Fri Apr 20 02:12:12 2012 |  Fixing nickchange problem, adding some checks
+| Lukas Michalski | Wed Apr 18 18:18:14 2012 |  Adding white logo
+| Lukas Michalski | Wed Apr 18 18:12:31 2012 |  Adding image, change core layout, bugfixes
+| Lukas Michalski | Wed Apr 18 03:34:40 2012 |  Adding UserName Functions, adjust output messages, bugfix
+| Lukas Michalski | Wed Apr 18 03:10:19 2012 |  Redesign of Layout, Adding Username Field, some fixes
+| Lukas Michalski | Wed Apr 18 01:13:44 2012 |  Adding warpMessage, bug fixing, outsource functions
+| Lukas Michalski | Tue Apr 17 01:54:52 2012 |  Some bugfixes. Adding setTopic method
+| Lukas Michalski | Mon Apr 16 20:52:37 2012 |  Adding message-routing and bugfix. Adding timeFormat class
+| Lukas Michalski | Mon Apr 16 04:27:55 2012 |  Fix build errors
+| Lukas Michalski | Mon Apr 16 04:08:31 2012 |  Redesign, adding Hash-class und fix send/receive message Problem
+| Lukas Michalski | Sun Apr 15 19:35:32 2012 |  Upload missing changed files
+| Lukas Michalski | Sun Apr 15 19:32:46 2012 |  Adding Parser and different adjustments
+| Lukas Michalski | Sun Apr 15 12:05:46 2012 |  First build
+| Lukas Michalski | Sat Apr 14 20:17:11 2012 |  Inital commit
+
+|=======
+
+=== Logbuch HTML5 - Chat Client (Obsolete) (git) ===
+
+[options="header"]
+|=======
+| Name            | Date                           | Comment
+| Benjamin Zeller | Wed Mar 28 20:31:20 2012 |  Use pre for chatlines so whitespaces are visible
+| Lukas Michalski | Wed Mar 28 18:06:55 2012 |  Adding timeFormat funktion
+| Benjamin Zeller | Wed Mar 28 00:01:56 2012 |  beautifing parser.js
+| Benjamin Zeller | Tue Mar 27 23:45:13 2012 |  fixed problem with some default messages
+| Benjamin Zeller | Mon Mar 26 20:49:10 2012 |  Handle Client disconnects, send messages only to the connections that
+| Benjamin Zeller | Sun Mar 25 22:03:57 2012 |  Protocol updates
+| Benjamin Zeller | Sat Mar 24 10:50:48 2012 |  fixed a parser error
+| Benjamin Zeller | Wed Mar 21 18:23:44 2012 |  Sending Messages to the right channel
+| Benjamin Zeller | Mon Mar 12 20:46:19 2012 |  Initial protocol handling and parsing
+| Benjamin Zeller | Thu Mar 8 00:59:56 2012 |  some fixes
+| Benjamin Zeller | Wed Feb 22 18:35:30 2012 |  Layout works
+| Benjamin Zeller | Wed Feb 15 18:40:53 2012 |  Netstring in webclient works, initial communication works
+| Lukas Michalski | Wed Feb 15 16:54:53 2012 |  Renaming file
+| Lukas Michalski | Wed Feb 15 16:52:21 2012 |  Initialimport
+|=======
+
+=== Logbuch Dokumentation (git) ===
+
+[options="header"]
+|=======
+| Name            | Date                           | Comment
+| Lukas Michalski | Fri Apr 27 02:39:36 2012 |  Adding Logbuch
+| Lukas Michalski | Fri Apr 27 02:21:06 2012 |  Additional documentation
+| Benjamin Zeller | Thu Apr 26 23:44:54 2012 |  Admin docs
+| Benjamin Zeller | Thu Apr 26 11:14:14 2012 |  Doku
+| Benjamin Zeller | Thu Apr 26 00:07:29 2012 |  Stuff
+| Benjamin Zeller | Thu Apr 26 00:05:19 2012 |  Image
+| Benjamin Zeller | Wed Apr 25 23:56:25 2012 |  Merge branch 'master' of gitorious.org:p-ms/pms-docs
+| Benjamin Zeller | Wed Apr 25 23:54:55 2012 |  Anpassung der Doku an die Vorgaben
+| Thorsten Schwalb | Wed Apr 25 19:18:19 2012 |  Anmerkungen ergaenzt
+| Benjamin Zeller | Wed Apr 25 14:10:25 2012 |  Some Changes
+| Benjamin Zeller | Wed Apr 25 14:08:18 2012 |  More docs
+| Benjamin Zeller | Wed Apr 25 11:21:05 2012 |  Adding Docs
+| Benjamin Zeller | Wed Apr 25 02:30:10 2012 |  Feintunging
+| Benjamin Zeller | Tue Apr 24 22:08:47 2012 |  Merge branch 'master' of gitorious.org:p-ms/pms-docs
+| Benjamin Zeller | Tue Apr 24 22:06:01 2012 |  Stuff
+| Thorsten Schwalb | Tue Apr 24 21:47:30 2012 |  Bilder und Aenderungen
+| Thorsten Schwalb | Tue Apr 24 20:10:13 2012 |  Manual
+| Thorsten Schwalb | Tue Apr 24 18:49:10 2012 |  Beschreibung Webclient ergaenzt
+| Benjamin Zeller | Tue Apr 24 14:29:11 2012 |  More docs
+| Thorsten Schwalb | Mon Apr 23 16:50:03 2012 |  Screenshots eingefuegt
+| Benjamin Zeller | Sun Apr 22 15:56:28 2012 |  My own thoughts
+| Benjamin Zeller | Sat Apr 21 00:01:55 2012 |  Here it belongs
+| Benjamin Zeller | Tue Apr 10 19:49:09 2012 |  Merge branch 'master' of gitorious.org:p-ms/pms-docs
+| Benjamin Zeller | Tue Apr 10 19:48:38 2012 |  Saving Ideas
+| Lukas Michalski | Sat Feb 11 11:22:08 2012 |  PreAlpha Database structure
+| Benjamin Zeller | Sat Feb 4 11:04:54 2012 |  Multiple Requests
+| Benjamin Zeller | Wed Feb 1 21:08:12 2012 |  Websocket Test
+| Benjamin Zeller | Wed Feb 1 14:11:49 2012 |  Research work
+| Benjamin Zeller | Mon Jan 30 20:55:43 2012 |  logfiles
+| Benjamin Zeller | Mon Jan 30 20:53:27 2012 |  Initial Import
+|=======
+
+=== Logbuch Enviroment ===
+
+[options="header"]
+|=======
+| Name            | Date                     | Comment
+| Lukas Michalski | Wed Apr 26 00:00:00 2012 | Install new virtual Maschine
+| Lukas Michalski | Wed Feb 14 00:00:00 2012 | Create folder structure on Host
+| Lukas Michalski | Wed Feb  3 00:00:00 2012 | Install virtual Maschine for Project
+|=======
+
+=== Logbuch MySQL ===
+
+[options="header"]
+|=======
+| Name            | Date                     | Comment
+| Lukas Michalski | Wed Apr 26 00:00:00 2012 | Final database design
+| Lukas Michalski | Wed Apr 26 00:00:00 2012 | Fix stored procedure error on import 
+| Lukas Michalski | Wed Apr 25 00:00:00 2012 | Work on stored procedure
+| Benjamin Zeller | Wed Apr 25 00:00:00 2012 | Work on stored procedure
+| Lukas Michalski | Wed Apr 15 00:00:00 2012 | Create SQL Statements for PMS-Admin
+| Benjamin Zeller | Wed Apr 15 00:00:00 2012 | Create SQL Statements for PMS-Admin
+| Lukas Michalski | Wed Mar 14 00:00:00 2012 | Next database design
+| Lukas Michalski | Wed Jan 13 00:00:00 2012 | First database design
+| Benjamin Zeller | Wed Jan 30 00:00:00 2012 | Collecting initial ideas
+| Lukas Michalski | Wed Jan 30 00:00:00 2012 | Collecting initial ideas
+|=======
+
+== Quellenverzeichnis ==
+
+=== Perl Pakete ===
+- AnyEvent
+- AnyEvent::DBI
+- CGI::Session
+- JSON
+- HTML::Template
+- Object::Event
+- Protocol::WebSocket
+
+=== Fremdsoftware ===
+- Qooxdoo JavaScript Framework SDK 1.6
+- Bootstrap CSS & JavaScript
+- JQuery
+- MySQL
+- Lighttpd
+
+=== Versionsverwaltung ===
+- git
+- gitorious
+
+=== Dokumentation ===
+- naturalDocs
+- asciiDoc
+
+=== IDE ===
+- kate
