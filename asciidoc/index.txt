@@ -1076,7 +1076,10 @@ NOCH GRAFIK MACHEN
 
 === Stored Procedures ===
 
-.mod_backlog_delChannel
+==== mod_backlog_delChannel ====
+
+Diese Procedure ...
+
 [source,sql]
 ----
 CREATE DEFINER=`root`@`localhost` 
@@ -1094,7 +1097,10 @@ BEGIN
 End
 ----
 
-.mod_backlog_emptyTable
+==== mod_backlog_emptyTable ====
+
+Diese Procedure ...
+
 [source,sql]
 ----
 CREATE DEFINER=`root`@`localhost` 
@@ -1127,7 +1133,10 @@ BEGIN
 END
 ----
 
-.mod_backlog_get
+==== mod_backlog_get ====
+
+Diese Procedure ...
+
 [source,sql]
 ----
 CREATE DEFINER=`root`@`localhost` 
@@ -1149,7 +1158,10 @@ BEGIN
 END
 ----
 
-.mod_backlog_write
+==== mod_backlog_write ====
+
+Diese Procedure ...
+
 [source,sql]
 ----
 CREATE DEFINER=`root`@`localhost` 
@@ -1175,7 +1187,10 @@ BEGIN
 End
 ----
 
-.mod_security_getChannelRoles
+==== mod_security_getChannelRoles ====
+
+Diese Procedure ...
+
 [source,sql]
 ----
 CREATE DEFINER=`root`@`localhost` 
@@ -1194,7 +1209,10 @@ BEGIN
 END
 ----
 
-.mod_security_getChannels
+==== mod_security_getChannels ====
+
+Diese Procedure ...
+
 [source,sql]
 ----
 CREATE DEFINER=`root`@`localhost` 
@@ -1207,7 +1225,10 @@ BEGIN
 END
 ----
 
-.Tmod_security_getUserWithRoles
+==== mod_security_getUserWithRoles ====
+
+Diese Procedure ...
+
 [source,sql]
 ----
 CREATE DEFINER=`root`@`localhost` 
@@ -1483,10 +1504,16 @@ END
 
 [options="header"]
 |=======
-| Name            | Date                     | Comment
-| Lukas Michalski | Wed Apr 26 2012 | Install new virtual Maschine
-| Lukas Michalski | Wed Feb 14 2012 | Create folder structure on Host
-| Lukas Michalski | Wed Feb  3 2012 | Install virtual Maschine for Project
+| Name            | Date            | Comment
+| Lukas Michalski | Thu Apr 26 2012 | Install new virtual Maschine
+| Lukas Michalski | Web Apr 25 2012 | Decided to change distribution
+| Lukas Michalski | Mon Apr 23 2012 | Further errors on system
+| Lukas Michalski | Wed Apr 11 2012 | Troubleshooting errors
+| Lukas Michalski | Fri Mar 23 2012 | Examine different Webservers
+| Lukas Michalski | Sat Mar  3 2012 | Restructure folders
+| Lukas Michalski | Tue Feb 14 2012 | Create folder structure on Host
+| Lukas Michalski | Thu Feb 09 2012 | Reconfigure and optimize system
+| Lukas Michalski | Fri Feb  3 2012 | Install virtual Maschine for Project
 |=======
 
 === Logbuch MySQL ===
@@ -1532,6 +1559,7 @@ END
 - naturalDocs
 - asciiDoc
 - dblatex
+- gimp
 
 === IDE ===
 - kate
