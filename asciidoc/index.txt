@@ -1416,6 +1416,14 @@ END
 [options="header"]
 |=======
 | Name            | Date                           | Comment
+| Benjamin Zeller  |Fri Apr 27 04:52:42 2012 |Merge branch 'master' of gitorious.org:p-ms/pms-docs
+| Benjamin Zeller  |Fri Apr 27 04:52:24 2012 |Recreating docs
+| Lukas Michalski  |Fri Apr 27 04:52:13 2012 |adding database stuff
+| Benjamin Zeller  |Fri Apr 27 04:51:41 2012 |Recreated docs
+| Benjamin Zeller  |Fri Apr 27 04:51:02 2012 |Merge branch 'master' of gitorious.org:p-ms/pms-docs
+| Benjamin Zeller  |Fri Apr 27 04:50:57 2012 |Finishing Docs
+| Benjamin Zeller  |Fri Apr 27 04:47:18 2012 |Finishing docs
+| Lukas Michalski  |Fri Apr 27 03:10:46 2012 |More doc
 | Lukas Michalski | Fri Apr 27 02:39:36 2012 |  Adding Logbuch
 | Lukas Michalski | Fri Apr 27 02:21:06 2012 |  Additional documentation
 | Benjamin Zeller | Thu Apr 26 23:44:54 2012 |  Admin docs
@@ -1446,6 +1454,29 @@ END
 | Benjamin Zeller | Wed Feb 1 14:11:49 2012 |  Research work
 | Benjamin Zeller | Mon Jan 30 20:55:43 2012 |  logfiles
 | Benjamin Zeller | Mon Jan 30 20:53:27 2012 |  Initial Import
+|=======
+
+=== Logbuch Thorsten Schwalb ===
+
+[options="header"]
+|=======
+| Thorsten Schwalb | Thu Feb 23 2012 | Erstellung von admin.html
+| Thorsten Schwalb | Thu Feb 23 2012 | login_success.html
+| Thorsten Schwalb | Fri Feb 24 2012 | post.html
+| Thorsten Schwalb | Sat Feb 25 2012 | Bearbeitung von admin.html
+| Thorsten Schwalb | Sun Feb 26 2012 | Bearbeitung von fill_database.pl
+| Thorsten Schwalb | Wed Feb 29 2012 | Oberfläche Tk
+| Thorsten Schwalb | Wed Feb 29 2012 | Erstellung von admin_css.html
+| Thorsten Schwalb | Mon Mar 12 2012 | Erstellung von user_delete.cgi
+| Thorsten Schwalb | Wed Mar 14 2012 | Backlog
+| Thorsten Schwalb | Wed Mar 21 2012 | Bearbeitung backlog.cgi, style.css
+| Thorsten Schwalb | Sat Mar 31 2012 | Einarbeitung in die Verwendung des CSS-Frameworks Bootstrap
+| Thorsten Schwalb | Sat Apr 14 2012 | login_false.html
+| Thorsten Schwalb | Sun Apr 15 2012 | Erstellung Datenbank Dump und versch. Stored Procedures,GIT
+| Thorsten Schwalb | Wed Apr 18 2012 | Schreiben der Dokumentation
+| Thorsten Schwalb | Fri Apr 20 2012 | Schreiben der Dokumentation
+| Thorsten Schwalb | Mon Apr 23 2012 | Dokumentation
+| Thorsten Schwalb | Wed Apr 25 2012 | Dokumentation
 |=======
 
 === Logbuch Enviroment ===
