@@ -1257,6 +1257,7 @@ END
   
 == Logb&uuml;cher ==
 
+- Hinweis: Logbuch mit Endung (git) zeigt die durchgeführten commits im jeweiligen repositpory. Zu beachten ist, dass der uploader nicht unbedingt gleich Bearbeiter ist!
 === Logbuch Core-System (git) ===
 
 [options="header"]
