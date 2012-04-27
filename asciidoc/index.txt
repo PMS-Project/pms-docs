@@ -381,7 +381,7 @@ Chatserver aufbauen.
 
 [NOTE]
 ====
-Im Rahmen der Projektarbeit, wurde nur der Chromium Browser getestet.
+Im Rahmen der Projektarbeit, wurden nur der Chromium und der Firefox Browser getestet.
 ====
 
 ===== Verwendete Fremdsoftware =====
