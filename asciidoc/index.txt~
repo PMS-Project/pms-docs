@@ -693,8 +693,6 @@ Channel in der Datenbank ist es auch nicht möglich den Channel zu betreten.
 
 === Überprüfung der Rechte (Schema) ===
 
-image:check-channel-rights.png["Channelrechte überprüfen",scale]
-
 === User-Schnittstelle (Kommandos) ===
 
 - */identify "username" "password"* +
