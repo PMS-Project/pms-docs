@@ -46,7 +46,7 @@ Format: 1.52
 # --------------------------------------------------------------------------
 
 
-File: main  (main.pl)
+File: main.pl  (main.pl)
 
 Group: Pms  {
 
@@ -80,7 +80,6 @@ Group: Pms  {
       File: Motd  (Pms/Modules/Motd.pm)
       File: Security::Module  (Pms/Modules/Security/Module.pm)
       File: Security::UserInfo  (Pms/Modules/Security/UserInfo.pm)
-      File: Stats  (Pms/Modules/Stats.pm)
       }  # Group: Modules
 
    Group: Net  {
@@ -107,5 +106,7 @@ Group: Index  {
    Class Index: Classes
    Function Index: Functions
    Variable Index: Variables
+   Signal Index: Signals
+   File Index: Files
    }  # Group: Index
 
