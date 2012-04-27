@@ -1966,7 +1966,7 @@ einfach ignoriert.</p></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_graphische_benutzeroberfläche">Graphische Benutzeroberfläche</h2>
+<h2 id="_graphische_benutzeroberfl_auml_che">Graphische Benutzeroberfl&auml;che</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_allgemein_5">Allgemein</h3>
@@ -2346,6 +2346,268 @@ Installation vom Qooxdoo Framework
 </div>
 </div>
 <div class="sect1">
+<h2 id="_datenbank_mysql">Datenbank MySQL</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_datenbank_schema">Datenbank Schema</h3>
+<div class="paragraph"><p><span class="image">
+<img src="ERM.png" alt=""Datenbank Schema"" />
+</span></p></div>
+</div>
+<div class="sect2">
+<h3 id="_primary_und_foreigner_keys">Primary und Foreigner Keys</h3>
+<div class="listingblock">
+<div class="content">
+<pre><tt>ALTER TABLE `mod_security_user_to_channelRole`
+  ADD CONSTRAINT `mod_security_user_to_channelRole_ibfk_1`
+    FOREIGN KEY (`userRef`)
+    REFERENCES `mod_security_users` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  ADD CONSTRAINT `mod_security_user_to_channelRole_ibfk_2`
+    FOREIGN KEY (`channelRef`)
+    REFERENCES `mod_security_channels` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  ADD CONSTRAINT `mod_security_user_to_channelRole_ibfk_4`
+    FOREIGN KEY (`roleRef`)
+    REFERENCES `mod_security_channelRoles` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;</tt></pre>
+</div></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>ALTER TABLE `mod_security_user_to_roles`
+  ADD CONSTRAINT `mod_security_user_to_roles_ibfk_1`
+    FOREIGN KEY (`userRef`)
+    REFERENCES `mod_security_users` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  ADD CONSTRAINT `mod_security_user_to_roles_ibfk_2`
+    FOREIGN KEY (`roleRef`)
+    REFERENCES `mod_security_roles` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;</tt></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_indexe_bzw_unique_constraints">Indexe bzw. Unique Constraints</h3>
+<div class="paragraph"><p>NOCH TEXT MACHEN</p></div>
+</div>
+<div class="sect2">
+<h3 id="_normalisierung">Normalisierung</h3>
+<div class="paragraph"><p>NOCH GRAFIK MACHEN</p></div>
+</div>
+<div class="sect2">
+<h3 id="_logisches_datenbankmodell">Logisches Datenbankmodell</h3>
+<div class="ulist"><ul>
+<li>
+<p>
+mod_backlog(<span class="underline">id</span>,who,when,what,channel)
+</p>
+</li>
+<li>
+<p>
+mod_security_channelRoles(<span class="underline">id</span>,name,description)
+</p>
+</li>
+<li>
+<p>
+mod_security_channels(<span class="underline">id</span>,name,topic)
+</p>
+</li>
+<li>
+<p>
+mod_security_roles(<span class="underline">id</span>,name,description)
+</p>
+</li>
+<li>
+<p>
+mod_security_users(<span class="underline">id</span>,username,password,forename,name)
+</p>
+</li>
+<li>
+<p>
+mod_security_user_to_channelRole(<span class="underline">id</span>,userRef(FK),channelRef(FK),roleRef(FK))
+</p>
+</li>
+<li>
+<p>
+mod_security_user_to_roles(<span class="underline">id</span>,userRef(FK),roleRef(FK))
+</p>
+</li>
+<li>
+<p>
+pms_admins(<span class="underline">id</span>,username,password,forename,name)
+</p>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
+<h3 id="_stored_procedures">Stored Procedures</h3>
+<div class="listingblock">
+<div class="title">mod_backlog_delChannel</div>
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="font-weight: bold"><span style="color: #0000FF">CREATE</span></span> DEFINER<span style="color: #990000">=</span><span style="color: #FF0000">`root`</span>@<span style="color: #FF0000">`localhost`</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">PROCEDURE</span></span> <span style="color: #FF0000">`mod_backlog_delChannel`</span><span style="color: #990000">(</span> <span style="font-weight: bold"><span style="color: #0000FF">in</span></span> channelName <span style="color: #009900">varchar</span><span style="color: #990000">(</span><span style="color: #993399">255</span><span style="color: #990000">)</span> <span style="color: #990000">)</span>
+
+BEGIN
+  PREPARE
+    stmt
+  <span style="font-weight: bold"><span style="color: #0000FF">FROM</span></span>
+    <span style="color: #FF0000">'DELETE FROM mod_backlog where channel=?;'</span><span style="color: #990000">;</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">SET</span></span>
+    @a <span style="color: #990000">=</span> channelName<span style="color: #990000">;</span>
+
+  EXECUTE stmt <span style="font-weight: bold"><span style="color: #0000FF">USING</span></span> @a<span style="color: #990000">;</span>
+End</tt></pre></div></div>
+<div class="listingblock">
+<div class="title">mod_backlog_emptyTable</div>
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="font-weight: bold"><span style="color: #0000FF">CREATE</span></span> DEFINER<span style="color: #990000">=</span><span style="color: #FF0000">`root`</span>@<span style="color: #FF0000">`localhost`</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">PROCEDURE</span></span> <span style="color: #FF0000">`mod_backlog_emptyTable`</span><span style="color: #990000">()</span>
+
+BEGIN
+ <span style="font-weight: bold"><span style="color: #0000FF">IF</span></span> <span style="color: #990000">(</span>
+  <span style="color: #990000">(</span>
+    <span style="font-weight: bold"><span style="color: #0000FF">SELECT</span></span>
+      COUNT<span style="color: #990000">(*)</span> <span style="font-weight: bold"><span style="color: #0000FF">AS</span></span> table_exists
+    <span style="font-weight: bold"><span style="color: #0000FF">FROM</span></span>
+      information_schema<span style="color: #990000">.</span><span style="font-weight: bold"><span style="color: #0000FF">tables</span></span>
+    <span style="font-weight: bold"><span style="color: #0000FF">WHERE</span></span>
+      TABLE_SCHEMA <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #0000FF">DATABASE</span></span><span style="color: #990000">()</span> <span style="font-weight: bold"><span style="color: #0000FF">AND</span></span>
+      table_name <span style="color: #990000">=</span> <span style="color: #FF0000">'mod_security_channels'</span>
+  <span style="color: #990000">)</span> <span style="color: #990000">=</span> <span style="color: #993399">0</span><span style="color: #990000">)</span>
+  THEN
+    <span style="font-weight: bold"><span style="color: #0000FF">DELETE</span></span> <span style="font-weight: bold"><span style="color: #0000FF">FROM</span></span>
+      <span style="color: #FF0000">`mod_backlog`</span> <span style="font-weight: bold"><span style="color: #0000FF">where</span></span> <span style="color: #993399">1</span><span style="color: #990000">;</span>
+  ELSE
+    <span style="font-weight: bold"><span style="color: #0000FF">DELETE</span></span> <span style="font-weight: bold"><span style="color: #0000FF">FROM</span></span>
+      <span style="color: #FF0000">`mod_backlog`</span> <span style="font-weight: bold"><span style="color: #0000FF">where</span></span> <span style="color: #FF0000">`channel`</span> <span style="font-weight: bold"><span style="color: #0000FF">not</span></span> <span style="font-weight: bold"><span style="color: #0000FF">in</span></span>
+      <span style="color: #990000">(</span>
+        <span style="font-weight: bold"><span style="color: #0000FF">SELECT</span></span>
+          <span style="color: #FF0000">`name`</span>
+        <span style="font-weight: bold"><span style="color: #0000FF">FROM</span></span>
+          <span style="color: #FF0000">`mod_security_channels`</span>
+      <span style="color: #990000">);</span>
+  END <span style="font-weight: bold"><span style="color: #0000FF">IF</span></span><span style="color: #990000">;</span>
+END</tt></pre></div></div>
+<div class="listingblock">
+<div class="title">mod_backlog_get</div>
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="font-weight: bold"><span style="color: #0000FF">CREATE</span></span> DEFINER<span style="color: #990000">=</span><span style="color: #FF0000">`root`</span>@<span style="color: #FF0000">`localhost`</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">PROCEDURE</span></span> <span style="color: #FF0000">`mod_backlog_get`</span><span style="color: #990000">(</span><span style="font-weight: bold"><span style="color: #0000FF">in</span></span> channelName <span style="color: #009900">varchar</span><span style="color: #990000">(</span><span style="color: #993399">255</span><span style="color: #990000">),</span><span style="font-weight: bold"><span style="color: #0000FF">in</span></span> count <span style="color: #009900">int</span><span style="color: #990000">)</span>
+BEGIN
+  <span style="font-weight: bold"><span style="color: #0000FF">SELECT</span></span>
+    who<span style="color: #990000">,</span><span style="color: #FF0000">`when`</span><span style="color: #990000">,</span>what
+  <span style="font-weight: bold"><span style="color: #0000FF">FROM</span></span> <span style="color: #990000">(</span>
+    <span style="font-weight: bold"><span style="color: #0000FF">SELECT</span></span>
+      who<span style="color: #990000">,</span><span style="color: #FF0000">`when`</span><span style="color: #990000">,</span>what<span style="color: #990000">,</span>id
+    <span style="font-weight: bold"><span style="color: #0000FF">FROM</span></span>
+      mod_backlog
+    <span style="font-weight: bold"><span style="color: #0000FF">WHERE</span></span>
+      channel<span style="color: #990000">=</span>channelName
+    <span style="font-weight: bold"><span style="color: #0000FF">ORDER</span></span> <span style="font-weight: bold"><span style="color: #0000FF">BY</span></span> id <span style="font-weight: bold"><span style="color: #0000FF">DESC</span></span> <span style="font-weight: bold"><span style="color: #0000FF">LIMIT</span></span> count
+    <span style="color: #990000">)</span> <span style="font-weight: bold"><span style="color: #0000FF">as</span></span> tbl
+  <span style="font-weight: bold"><span style="color: #0000FF">ORDER</span></span> <span style="font-weight: bold"><span style="color: #0000FF">BY</span></span>
+    tbl<span style="color: #990000">.</span><span style="color: #FF0000">`when`</span><span style="color: #990000">,</span>tbl<span style="color: #990000">.</span>id<span style="color: #990000">;</span>
+END</tt></pre></div></div>
+<div class="listingblock">
+<div class="title">mod_backlog_write</div>
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="font-weight: bold"><span style="color: #0000FF">CREATE</span></span> DEFINER<span style="color: #990000">=</span><span style="color: #FF0000">`root`</span>@<span style="color: #FF0000">`localhost`</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">PROCEDURE</span></span> <span style="color: #FF0000">`mod_backlog_write`</span><span style="color: #990000">(</span><span style="font-weight: bold"><span style="color: #0000FF">in</span></span> nickname <span style="color: #009900">varchar</span><span style="color: #990000">(</span><span style="color: #993399">255</span><span style="color: #990000">)</span>
+                                <span style="color: #990000">,</span><span style="font-weight: bold"><span style="color: #0000FF">in</span></span> msgTime <span style="color: #009900">int</span>
+                                <span style="color: #990000">,</span><span style="font-weight: bold"><span style="color: #0000FF">in</span></span> channelName <span style="color: #009900">varchar</span><span style="color: #990000">(</span><span style="color: #993399">255</span><span style="color: #990000">)</span>
+                                <span style="color: #990000">,</span><span style="font-weight: bold"><span style="color: #0000FF">in</span></span> msg <span style="color: #009900">longtext</span><span style="color: #990000">)</span>
+BEGIN
+  PREPARE
+    stmt
+  <span style="font-weight: bold"><span style="color: #0000FF">FROM</span></span>
+    <span style="color: #FF0000">'INSERT INTO</span>
+<span style="color: #FF0000">        mod_backlog (who,`when`,channel,what)</span>
+<span style="color: #FF0000">     VALUES</span>
+<span style="color: #FF0000">        (?,?,?,?)'</span><span style="color: #990000">;</span>
+
+  <span style="font-weight: bold"><span style="color: #0000FF">SET</span></span> @a <span style="color: #990000">=</span> nickname<span style="color: #990000">;</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">SET</span></span> @b <span style="color: #990000">=</span> msgTime<span style="color: #990000">;</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">SET</span></span> @c <span style="color: #990000">=</span> channelName<span style="color: #990000">;</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">SET</span></span> @d <span style="color: #990000">=</span> msg<span style="color: #990000">;</span>
+
+  EXECUTE stmt <span style="font-weight: bold"><span style="color: #0000FF">USING</span></span> @a<span style="color: #990000">,</span>@b<span style="color: #990000">,</span>@c<span style="color: #990000">,</span>@d<span style="color: #990000">;</span>
+End</tt></pre></div></div>
+<div class="listingblock">
+<div class="title">mod_security_getChannelRoles</div>
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="font-weight: bold"><span style="color: #0000FF">CREATE</span></span> DEFINER<span style="color: #990000">=</span><span style="color: #FF0000">`root`</span>@<span style="color: #FF0000">`localhost`</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">PROCEDURE</span></span> <span style="color: #FF0000">`mod_security_getChannelRoles`</span><span style="color: #990000">(</span><span style="font-weight: bold"><span style="color: #0000FF">in</span></span> userRefArg <span style="color: #009900">int</span>
+                                          <span style="color: #990000">,</span><span style="font-weight: bold"><span style="color: #0000FF">in</span></span> channelRefArg <span style="color: #009900">int</span> <span style="color: #990000">)</span>
+BEGIN
+    <span style="font-weight: bold"><span style="color: #0000FF">SELECT</span></span>
+      roles<span style="color: #990000">.</span>name
+    <span style="font-weight: bold"><span style="color: #0000FF">FROM</span></span>
+      mod_security_user_to_channelRole <span style="font-weight: bold"><span style="color: #0000FF">as</span></span> usrToRoles<span style="color: #990000">,</span>
+      mod_security_channelRoles <span style="font-weight: bold"><span style="color: #0000FF">as</span></span> roles
+    <span style="font-weight: bold"><span style="color: #0000FF">WHERE</span></span>
+      usrToRoles<span style="color: #990000">.</span>userRef <span style="color: #990000">=</span> userRefArg <span style="font-weight: bold"><span style="color: #0000FF">AND</span></span>
+      usrToRoles<span style="color: #990000">.</span>channelRef <span style="color: #990000">=</span> channelRefArg <span style="font-weight: bold"><span style="color: #0000FF">AND</span></span>
+      usrToRoles<span style="color: #990000">.</span>roleRef <span style="color: #990000">=</span> roles<span style="color: #990000">.</span>id<span style="color: #990000">;</span>
+END</tt></pre></div></div>
+<div class="listingblock">
+<div class="title">mod_security_getChannels</div>
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="font-weight: bold"><span style="color: #0000FF">CREATE</span></span> DEFINER<span style="color: #990000">=</span><span style="color: #FF0000">`root`</span>@<span style="color: #FF0000">`localhost`</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">PROCEDURE</span></span> <span style="color: #FF0000">`mod_security_getChannels`</span><span style="color: #990000">(</span> <span style="color: #990000">)</span>
+BEGIN
+  <span style="font-weight: bold"><span style="color: #0000FF">SELECT</span></span>
+    id<span style="color: #990000">,</span>name<span style="color: #990000">,</span>topic
+  <span style="font-weight: bold"><span style="color: #0000FF">FROM</span></span>
+    mod_security_channels<span style="color: #990000">;</span>
+END</tt></pre></div></div>
+<div class="listingblock">
+<div class="title">Tmod_security_getUserWithRoles</div>
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="font-weight: bold"><span style="color: #0000FF">CREATE</span></span> DEFINER<span style="color: #990000">=</span><span style="color: #FF0000">`root`</span>@<span style="color: #FF0000">`localhost`</span>
+  <span style="font-weight: bold"><span style="color: #0000FF">PROCEDURE</span></span> <span style="color: #FF0000">`mod_security_getUserWithRoles`</span><span style="color: #990000">(</span><span style="font-weight: bold"><span style="color: #0000FF">in</span></span> name <span style="color: #009900">VARCHAR</span><span style="color: #990000">(</span><span style="color: #993399">255</span><span style="color: #990000">)</span>
+                                           <span style="color: #990000">,</span><span style="font-weight: bold"><span style="color: #0000FF">in</span></span> pass <span style="color: #009900">VARCHAR</span><span style="color: #990000">(</span><span style="color: #993399">255</span><span style="color: #990000">)</span> <span style="color: #990000">)</span>
+BEGIN
+    <span style="font-weight: bold"><span style="color: #0000FF">SELECT</span></span>
+      users<span style="color: #990000">.</span>id <span style="font-weight: bold"><span style="color: #0000FF">as</span></span> userId<span style="color: #990000">,</span>roles<span style="color: #990000">.</span>name <span style="font-weight: bold"><span style="color: #0000FF">as</span></span> roleName
+    <span style="font-weight: bold"><span style="color: #0000FF">FROM</span></span>
+      mod_security_users <span style="font-weight: bold"><span style="color: #0000FF">as</span></span> users <span style="color: #990000">,</span>
+      mod_security_user_to_roles <span style="font-weight: bold"><span style="color: #0000FF">as</span></span> usrToRoles<span style="color: #990000">,</span>
+      mod_security_roles <span style="font-weight: bold"><span style="color: #0000FF">as</span></span> roles
+    <span style="font-weight: bold"><span style="color: #0000FF">WHERE</span></span>
+      users<span style="color: #990000">.</span>id <span style="color: #990000">=</span> usrToRoles<span style="color: #990000">.</span>userRef <span style="font-weight: bold"><span style="color: #0000FF">AND</span></span>
+      usrToRoles<span style="color: #990000">.</span>roleRef <span style="color: #990000">=</span> roles<span style="color: #990000">.</span>id <span style="font-weight: bold"><span style="color: #0000FF">AND</span></span>
+      users<span style="color: #990000">.</span>username <span style="color: #990000">=</span> name <span style="font-weight: bold"><span style="color: #0000FF">AND</span></span>
+      users<span style="color: #990000">.</span>password <span style="color: #990000">=</span> pass<span style="color: #990000">;</span>
+END</tt></pre></div></div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_probleme">Probleme</h2>
 <div class="sectionbody">
 <div class="sect2">
@@ -2361,7 +2623,7 @@ Probleme mit Stored Procedures mit MySQL Version &lt; 5.5
 </div>
 </div>
 <div class="sect1">
-<h2 id="_logbücher">Logbücher</h2>
+<h2 id="_logb_uuml_cher">Logb&uuml;cher</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_logbuch_core_system_git">Logbuch Core-System (git)</h3>
@@ -3373,17 +3635,17 @@ cellspacing="0" cellpadding="4">
 <tbody>
 <tr>
 <td align="left" valign="top"><p class="table">Lukas Michalski</p></td>
-<td align="left" valign="top"><p class="table">Wed Apr 26 00:00:00 2012</p></td>
+<td align="left" valign="top"><p class="table">Wed Apr 26 2012</p></td>
 <td align="left" valign="top"><p class="table">Install new virtual Maschine</p></td>
 </tr>
 <tr>
 <td align="left" valign="top"><p class="table">Lukas Michalski</p></td>
-<td align="left" valign="top"><p class="table">Wed Feb 14 00:00:00 2012</p></td>
+<td align="left" valign="top"><p class="table">Wed Feb 14 2012</p></td>
 <td align="left" valign="top"><p class="table">Create folder structure on Host</p></td>
 </tr>
 <tr>
 <td align="left" valign="top"><p class="table">Lukas Michalski</p></td>
-<td align="left" valign="top"><p class="table">Wed Feb  3 00:00:00 2012</p></td>
+<td align="left" valign="top"><p class="table">Wed Feb  3 2012</p></td>
 <td align="left" valign="top"><p class="table">Install virtual Maschine for Project</p></td>
 </tr>
 </tbody>
@@ -3410,52 +3672,52 @@ cellspacing="0" cellpadding="4">
 <tbody>
 <tr>
 <td align="left" valign="top"><p class="table">Lukas Michalski</p></td>
-<td align="left" valign="top"><p class="table">Wed Apr 26 00:00:00 2012</p></td>
+<td align="left" valign="top"><p class="table">Wed Apr 26 2012</p></td>
 <td align="left" valign="top"><p class="table">Final database design</p></td>
 </tr>
 <tr>
 <td align="left" valign="top"><p class="table">Lukas Michalski</p></td>
-<td align="left" valign="top"><p class="table">Wed Apr 26 00:00:00 2012</p></td>
+<td align="left" valign="top"><p class="table">Wed Apr 26 2012</p></td>
 <td align="left" valign="top"><p class="table">Fix stored procedure error on import</p></td>
 </tr>
 <tr>
 <td align="left" valign="top"><p class="table">Lukas Michalski</p></td>
-<td align="left" valign="top"><p class="table">Wed Apr 25 00:00:00 2012</p></td>
+<td align="left" valign="top"><p class="table">Wed Apr 25 2012</p></td>
 <td align="left" valign="top"><p class="table">Work on stored procedure</p></td>
 </tr>
 <tr>
 <td align="left" valign="top"><p class="table">Benjamin Zeller</p></td>
-<td align="left" valign="top"><p class="table">Wed Apr 25 00:00:00 2012</p></td>
+<td align="left" valign="top"><p class="table">Wed Apr 25 2012</p></td>
 <td align="left" valign="top"><p class="table">Work on stored procedure</p></td>
 </tr>
 <tr>
 <td align="left" valign="top"><p class="table">Lukas Michalski</p></td>
-<td align="left" valign="top"><p class="table">Wed Apr 15 00:00:00 2012</p></td>
+<td align="left" valign="top"><p class="table">Wed Apr 15 2012</p></td>
 <td align="left" valign="top"><p class="table">Create SQL Statements for PMS-Admin</p></td>
 </tr>
 <tr>
 <td align="left" valign="top"><p class="table">Benjamin Zeller</p></td>
-<td align="left" valign="top"><p class="table">Wed Apr 15 00:00:00 2012</p></td>
+<td align="left" valign="top"><p class="table">Wed Apr 15 2012</p></td>
 <td align="left" valign="top"><p class="table">Create SQL Statements for PMS-Admin</p></td>
 </tr>
 <tr>
 <td align="left" valign="top"><p class="table">Lukas Michalski</p></td>
-<td align="left" valign="top"><p class="table">Wed Mar 14 00:00:00 2012</p></td>
+<td align="left" valign="top"><p class="table">Wed Mar 14 2012</p></td>
 <td align="left" valign="top"><p class="table">Next database design</p></td>
 </tr>
 <tr>
 <td align="left" valign="top"><p class="table">Lukas Michalski</p></td>
-<td align="left" valign="top"><p class="table">Wed Jan 13 00:00:00 2012</p></td>
+<td align="left" valign="top"><p class="table">Wed Jan 13 2012</p></td>
 <td align="left" valign="top"><p class="table">First database design</p></td>
 </tr>
 <tr>
 <td align="left" valign="top"><p class="table">Benjamin Zeller</p></td>
-<td align="left" valign="top"><p class="table">Wed Jan 30 00:00:00 2012</p></td>
+<td align="left" valign="top"><p class="table">Wed Jan 30 2012</p></td>
 <td align="left" valign="top"><p class="table">Collecting initial ideas</p></td>
 </tr>
 <tr>
 <td align="left" valign="top"><p class="table">Lukas Michalski</p></td>
-<td align="left" valign="top"><p class="table">Wed Jan 30 00:00:00 2012</p></td>
+<td align="left" valign="top"><p class="table">Wed Jan 30 2012</p></td>
 <td align="left" valign="top"><p class="table">Collecting initial ideas</p></td>
 </tr>
 </tbody>
@@ -3565,6 +3827,11 @@ naturalDocs
 asciiDoc
 </p>
 </li>
+<li>
+<p>
+dblatex
+</p>
+</li>
 </ul></div>
 </div>
 <div class="sect2">
@@ -3583,7 +3850,7 @@ kate
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2012-04-27 03:09:15 CEST
+Last updated 2012-04-27 04:48:34 CEST
 </div>
 </div>
 </body>

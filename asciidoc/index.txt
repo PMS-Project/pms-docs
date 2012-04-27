@@ -820,7 +820,7 @@ einfach ignoriert.
   
 image:adminWindow.png["Chat Fenster",scale]
   
-== Graphische Benutzeroberfläche ==
+== Graphische Benutzeroberfl&auml;che ==
 
 === Allgemein ===
 Damit Benutzer über den Core miteinander kommunizieren können, wurde 
@@ -1014,12 +1014,227 @@ $HTTP["url"] =~ "^/pms-admin/" {
 [/srv/http]$ ln -s /srv/project/qooxdoo/pms/build/ pms_admin
 ----
 
+== Datenbank MySQL ==
+
+=== Datenbank Schema ===
+
+image:ERM.png["Datenbank Schema",scale]
+
+=== Primary und Foreigner Keys ===
+
+----
+ALTER TABLE `mod_security_user_to_channelRole`
+  ADD CONSTRAINT `mod_security_user_to_channelRole_ibfk_1` 
+    FOREIGN KEY (`userRef`) 
+    REFERENCES `mod_security_users` (`id`) 
+    ON DELETE CASCADE 
+    ON UPDATE CASCADE,
+  ADD CONSTRAINT `mod_security_user_to_channelRole_ibfk_2` 
+    FOREIGN KEY (`channelRef`) 
+    REFERENCES `mod_security_channels` (`id`) 
+    ON DELETE CASCADE 
+    ON UPDATE CASCADE,
+  ADD CONSTRAINT `mod_security_user_to_channelRole_ibfk_4` 
+    FOREIGN KEY (`roleRef`) 
+    REFERENCES `mod_security_channelRoles` (`id`) 
+    ON DELETE CASCADE 
+    ON UPDATE CASCADE;
+----
+
+----
+ALTER TABLE `mod_security_user_to_roles`
+  ADD CONSTRAINT `mod_security_user_to_roles_ibfk_1` 
+    FOREIGN KEY (`userRef`) 
+    REFERENCES `mod_security_users` (`id`) 
+    ON DELETE CASCADE 
+    ON UPDATE CASCADE,
+  ADD CONSTRAINT `mod_security_user_to_roles_ibfk_2` 
+    FOREIGN KEY (`roleRef`) 
+    REFERENCES `mod_security_roles` (`id`) 
+    ON DELETE CASCADE 
+    ON UPDATE CASCADE;
+----
+
+=== Indexe bzw. Unique Constraints ===
+
+NOCH TEXT MACHEN
+
+=== Normalisierung ===
+
+NOCH GRAFIK MACHEN
+
+=== Logisches Datenbankmodell ===
+
+- mod_backlog([underline]#id#,who,when,what,channel)
+- mod_security_channelRoles([underline]#id#,name,description)
+- mod_security_channels([underline]#id#,name,topic)
+- mod_security_roles([underline]#id#,name,description)
+- mod_security_users([underline]#id#,username,password,forename,name)
+- mod_security_user_to_channelRole([underline]#id#,userRef(FK),channelRef(FK),roleRef(FK))
+- mod_security_user_to_roles([underline]#id#,userRef(FK),roleRef(FK))
+- pms_admins([underline]#id#,username,password,forename,name)
+
+=== Stored Procedures ===
+
+.mod_backlog_delChannel
+[source,sql]
+----
+CREATE DEFINER=`root`@`localhost` 
+  PROCEDURE `mod_backlog_delChannel`( in channelName varchar(255) )
+
+BEGIN
+  PREPARE 
+    stmt 
+  FROM 
+    'DELETE FROM mod_backlog where channel=?;';
+  SET 
+    @a = channelName;
+  
+  EXECUTE stmt USING @a;
+End
+----
+
+.mod_backlog_emptyTable
+[source,sql]
+----
+CREATE DEFINER=`root`@`localhost` 
+  PROCEDURE `mod_backlog_emptyTable`()
+
+BEGIN
+ IF (
+  (
+    SELECT 
+      COUNT(*) AS table_exists
+    FROM 
+      information_schema.tables
+    WHERE 
+      TABLE_SCHEMA = DATABASE() AND 
+      table_name = 'mod_security_channels'
+  ) = 0) 
+  THEN
+    DELETE FROM 
+      `mod_backlog` where 1;
+  ELSE
+    DELETE FROM 
+      `mod_backlog` where `channel` not in 
+      (
+        SELECT 
+          `name` 
+        FROM 
+          `mod_security_channels`
+      );
+  END IF;
+END
+----
+
+.mod_backlog_get
+[source,sql]
+----
+CREATE DEFINER=`root`@`localhost` 
+  PROCEDURE `mod_backlog_get`(in channelName varchar(255),in count int)
+BEGIN
+  SELECT 
+    who,`when`,what 
+  FROM (
+    SELECT 
+      who,`when`,what,id 
+    FROM 
+      mod_backlog 
+    WHERE 
+      channel=channelName 
+    ORDER BY id DESC LIMIT count
+    ) as tbl 
+  ORDER BY 
+    tbl.`when`,tbl.id;
+END
+----
+
+.mod_backlog_write
+[source,sql]
+----
+CREATE DEFINER=`root`@`localhost` 
+  PROCEDURE `mod_backlog_write`(in nickname varchar(255)
+                                ,in msgTime int
+                                ,in channelName varchar(255)
+                                ,in msg longtext)
+BEGIN
+  PREPARE  
+    stmt 
+  FROM 
+    'INSERT INTO 
+        mod_backlog (who,`when`,channel,what) 
+     VALUES 
+        (?,?,?,?)';
+        
+  SET @a = nickname;
+  SET @b = msgTime;
+  SET @c = channelName;
+  SET @d = msg;
+
+  EXECUTE stmt USING @a,@b,@c,@d;
+End
+----
+
+.mod_security_getChannelRoles
+[source,sql]
+----
+CREATE DEFINER=`root`@`localhost` 
+  PROCEDURE `mod_security_getChannelRoles`(in userRefArg int
+                                          ,in channelRefArg int )
+BEGIN
+    SELECT 
+      roles.name 
+    FROM
+      mod_security_user_to_channelRole as usrToRoles,
+      mod_security_channelRoles as roles
+    WHERE 
+      usrToRoles.userRef = userRefArg AND 
+      usrToRoles.channelRef = channelRefArg AND 
+      usrToRoles.roleRef = roles.id;
+END
+----
+
+.mod_security_getChannels
+[source,sql]
+----
+CREATE DEFINER=`root`@`localhost` 
+  PROCEDURE `mod_security_getChannels`( )
+BEGIN
+  SELECT 
+    id,name,topic 
+  FROM 
+    mod_security_channels;
+END
+----
+
+.Tmod_security_getUserWithRoles
+[source,sql]
+----
+CREATE DEFINER=`root`@`localhost` 
+  PROCEDURE `mod_security_getUserWithRoles`(in name VARCHAR(255)
+                                           ,in pass VARCHAR(255) )
+BEGIN
+    SELECT 
+      users.id as userId,roles.name as roleName 
+    FROM 
+      mod_security_users as users ,
+      mod_security_user_to_roles as usrToRoles,
+      mod_security_roles as roles
+    WHERE 
+      users.id = usrToRoles.userRef AND
+      usrToRoles.roleRef = roles.id AND
+      users.username = name AND 
+      users.password = pass;
+END
+----
+
+
 == Probleme ==
 
 === Datenbank ===
 - Probleme mit Stored Procedures mit MySQL Version < 5.5
   
-== Logbücher ==
+== Logb&uuml;cher ==
 
 === Logbuch Core-System (git) ===
 
@@ -1238,9 +1453,9 @@ $HTTP["url"] =~ "^/pms-admin/" {
 [options="header"]
 |=======
 | Name            | Date                     | Comment
-| Lukas Michalski | Wed Apr 26 00:00:00 2012 | Install new virtual Maschine
-| Lukas Michalski | Wed Feb 14 00:00:00 2012 | Create folder structure on Host
-| Lukas Michalski | Wed Feb  3 00:00:00 2012 | Install virtual Maschine for Project
+| Lukas Michalski | Wed Apr 26 2012 | Install new virtual Maschine
+| Lukas Michalski | Wed Feb 14 2012 | Create folder structure on Host
+| Lukas Michalski | Wed Feb  3 2012 | Install virtual Maschine for Project
 |=======
 
 === Logbuch MySQL ===
@@ -1248,16 +1463,16 @@ $HTTP["url"] =~ "^/pms-admin/" {
 [options="header"]
 |=======
 | Name            | Date                     | Comment
-| Lukas Michalski | Wed Apr 26 00:00:00 2012 | Final database design
-| Lukas Michalski | Wed Apr 26 00:00:00 2012 | Fix stored procedure error on import 
-| Lukas Michalski | Wed Apr 25 00:00:00 2012 | Work on stored procedure
-| Benjamin Zeller | Wed Apr 25 00:00:00 2012 | Work on stored procedure
-| Lukas Michalski | Wed Apr 15 00:00:00 2012 | Create SQL Statements for PMS-Admin
-| Benjamin Zeller | Wed Apr 15 00:00:00 2012 | Create SQL Statements for PMS-Admin
-| Lukas Michalski | Wed Mar 14 00:00:00 2012 | Next database design
-| Lukas Michalski | Wed Jan 13 00:00:00 2012 | First database design
-| Benjamin Zeller | Wed Jan 30 00:00:00 2012 | Collecting initial ideas
-| Lukas Michalski | Wed Jan 30 00:00:00 2012 | Collecting initial ideas
+| Lukas Michalski | Wed Apr 26 2012 | Final database design
+| Lukas Michalski | Wed Apr 26 2012 | Fix stored procedure error on import 
+| Lukas Michalski | Wed Apr 25 2012 | Work on stored procedure
+| Benjamin Zeller | Wed Apr 25 2012 | Work on stored procedure
+| Lukas Michalski | Wed Apr 15 2012 | Create SQL Statements for PMS-Admin
+| Benjamin Zeller | Wed Apr 15 2012 | Create SQL Statements for PMS-Admin
+| Lukas Michalski | Wed Mar 14 2012 | Next database design
+| Lukas Michalski | Wed Jan 13 2012 | First database design
+| Benjamin Zeller | Wed Jan 30 2012 | Collecting initial ideas
+| Lukas Michalski | Wed Jan 30 2012 | Collecting initial ideas
 |=======
 
 == Quellenverzeichnis ==
@@ -1285,6 +1500,7 @@ $HTTP["url"] =~ "^/pms-admin/" {
 === Dokumentation ===
 - naturalDocs
 - asciiDoc
+- dblatex
 
 === IDE ===
 - kate
