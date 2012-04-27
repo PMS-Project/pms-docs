@@ -818,6 +818,232 @@ müssen als JSON-Dokument per POST Request übergeben werden.
 In der aktuellen Konfiguration werden unbekannte GET-Parameter
 einfach ignoriert.
   
+image:adminWindow.png["Chat Fenster",scale]
   
+== Graphische Benutzeroberfläche ==
+
+=== Allgemein ===
+Damit Benutzer über den Core miteinander kommunizieren können, wurde 
+dieser Chat Client entwickelt.
+
+     
+=== Fremdsoftware ===
+
+- link:http://www.qooxdoo.org/[Qooxdoo JavaScript Framework SDK v1.6]
++
+  qooxdoo ist ein clientseitiges Framework für den Bau grafischer 
+  Benutzeroberflächen für Webanwendungen mit Hilfe des Programmierkonzepts 
+  Ajax. qooxdoo ist ein Rahmenwerk für die Entwicklung von Anwendungen, 
+  die der Benutzer über seinen Webbrowser aufruft und bedient. Es stellt 
+  in einer Programmbibliothek zahlreiche auf der Skriptsprache JavaScript 
+  basierende Komponenten zur Verfügung, die Aussehen und Bedienung von 
+  Webanwendungen an klassische Desktop-Anwendungen angleichen. Dabei 
+  verwendet es das Programmierkonzept Ajax, das es erlaubt, Benutzer-
+  eingaben zu verarbeiten, ohne die gesamte Webseite neu zu laden.
   
+=== Implementation und Design ===
+Die komplette Implementation erfolgte in Javascript und als Framework wurde 
+Qooxdoo verwendet. Es wurden alle Commands und Messages des Server 
+implementiert.
+
+Genauere Implementationsdetails des Chatclients werden in diesem Dokument
+nicht weiter behandelt, da die graphische Oberfläche in JavaScript entwickelt 
+wurde und nicht Gegenstand des Unterrichtes ist.
+
+image:chatWindow.png["Chat Fenster",scale]
+
+== Systemvoraussetzungen ==
+
+=== Allgemein ===
+Um diese Software nutzen zu können, müssen diverse Voraussetzungen erfüllt sein.
+Im weiteren wird ein System beschrieben, welches erfolgreich getestet wurde.
+
+=== Core - System ===
+
+Betriebssystem: ArchLinux x64
+
+- Repositories: core-remote
+- Paketauswahl: base, standard
+
+
+==== Zu installierende Pakete ====
+- base-devel +
+    ( pacman -S base-devel ) ( all )
+- openssh +
+    ( pacman -S openssh ) 
+- git +
+    ( pacman -S git ) 
+- mysql +
+    ( pacman -S mysql )
+- perl-dbd-mysql +
+    ( pacman -S perl-dbd-mysql )
+
+==== Perl Pakete ====
+- AnyEvent
+- AnyEvent::DBI
+- Object::Event
+- Protocol::WebSocket
+
+==== Quellen ====
+- git://gitorious.org/p-ms/pms-server.git
+
+----
+[/srv/project]$ git clone git://gitorious.org/p-ms/pms-server.git
+----
+
+==== Datenbank ====
+
+- MySQL DB anlegen
+----
+  - mysql -u root -p
+    Enter password:
+    
+    mysql> create database pms;
+    Query OK, 1 row affected (0.00 sec)
+
+    mysql> grant usage on *.* to pms@localhost identified by 'pass';
+    Query OK, 0 rows affected (0.00 sec)
+
+    mysql> grant all privileges on pms.* to pms@localhost;
+    Query OK, 0 rows affected (0.00 sec)
+----
+- MySQL Dump importieren
+
+- PmsConfig.pm konfigurieren +
+  Bereich *%baseDBHash* einrichten
+
+=== Admin - Interface ===
+
+==== Zu installierende Pakete ====
+- lighttpd +
+  (pacman -S lighttpd)
+
+==== Perl Pakete ====
+- HTML::Template
+- CGI::Session
+- JSON
+
+==== Quellen ====
+- git://gitorious.org/p-ms/pms-admin.git
+
+----
+[/srv/project]$ git clone git://gitorious.org/p-ms/pms-admin.git
+----
+==== Datenbank ====
+- PmsConfig.pm konfigurieren
+
+==== HTTP-Server ====
+- Konfiguration des Servers +
+  ( nano /etc/lighttpd/lighttpd.conf )
+
+----
+server.port             = 80
+server.username         = "http"
+server.groupname        = "http"
+server.document-root    = "/srv/http"
+server.errorlog         = "/var/log/lighttpd/error.log"
+dir-listing.activate    = "enable"
+index-file.names        = ( "index.html", "login.pl" )
+mimetype.assign         = ( ".html" => "text/html", 
+                            ".txt" => "text/plain", 
+                            ".jpg" => "image/jpeg", 
+                            ".png" => "image/png", 
+                            ".css" => "text/css", 
+                            ".js" => "text/javascript", 
+                            "" => "text/html" 
+                          )
+
+server.modules = ( "mod_cgi" )
+
+$HTTP["url"] =~ "^/pms-admin/" {
+        cgi.assign = ( ".pl" => "/usr/bin/perl" )
+}
+----
+
+- Standardbenutzer: 
+* luggi
+* zbenjamin
+- Standardpasswort:
+* passwort
+
+=== HTML5 - Chat Client ===
+
+==== Zu installierende Pakete ====
+- unzip +
+  ( packer -S unzip )
+- python2 +
+  ( packer -S python2 )
+
+==== Quellen ====
+- git://gitorious.org/p-ms/pms-webclient-qx.git
+
+----
+[/srv/project]$ git clone git://gitorious.org/p-ms/pms-webclient-qx.git
+----
+
+==== Framework ====
+- Installation vom Qooxdoo Framework
+----
+[/srv/packages]$ wget http://downloads.sourceforge.net/qooxdoo/qooxdoo-1.6-sdk.zip
+
+[/srv/packages]$ unzip qooxdoo-1.6-sdk.zip
+
+[/srv/packages]$ mv qooxdoo-1.6-sdk /opt/
+
+[/srv/packages]$ cd /srv/project
+
+[/srv/project]$ mkdir qooxdoo
+
+[/srv/project]$ cd qooxdoo
+
+[/srv/project/qooxdoo]$ python2 /opt/qooxdoo-1.6-sdk/tool/bin/create-application.py \
+                      > --name=pms --out=.
+
+[/srv/project/qooxdoo]$ cp /srv/project/pms-webclient-qx/*.js \
+                      > /srv/project/qooxdoo/pms/source/class/pms/
+                      
+[/srv/project/qooxdoo]$ cp /srv/project/pms-webclient-qx/images/logo_pms.png \
+                      >/srv/project/qooxdoo/pms/source/resource/pms
+                      
+[/srv/project/qooxdoo]$ cd pms
+
+[/srv/project/qooxdoo/pms]$ python2 generate.py build
+
+[/srv/project/qooxdoo/pms]$ cd /srv/http/
+
+[/srv/http]$ ln -s /srv/project/qooxdoo/pms/build/ pms_admin
+----
+
+== Probleme ==
+
+=== Datenbank ===
+- Probleme mit Stored Procedures mit MySQL Version < 5.5
   
+== Quellenverzeichnis ==
+
+=== Perl Pakete ===
+- AnyEvent
+- AnyEvent::DBI
+- CGI::Session
+- JSON
+- HTML::Template
+- Object::Event
+- Protocol::WebSocket
+
+=== Fremdsoftware ===
+- Qooxdoo JavaScript Framework SDK 1.6
+- Bootstrap CSS & JavaScript
+- JQuery
+- MySQL
+- Lighttpd
+
+=== Versionsverwaltung ===
+- git
+- gitorious
+
+=== Dokumentation ===
+- naturalDocs
+- asciiDoc
+
+=== IDE ===
+- kate
