@@ -47,6 +47,8 @@ auf welche Weise es möglich ist den P.M.S. Server zu erweitern.
 Vor allem das Security Modul ist hierbei hervorzuheben, 
 da es fast die komplette Palette der Möglichkeiten ausnutzt.
 
+<<<
+
 *Die Ziele waren wie folgt:*
 
 . Security 
@@ -132,6 +134,60 @@ erfolgte in Perl, Javascript und Html.
 +
   Konnte im Zeitrahmen des Projektes nicht umgesetzt werden
 
+=== Probleme ===
+Einige der Probleme auf die wir beim erstellen dieser Software hatten
+waren folgende:
+
+- Probleme mit dem Handshake des Websocket Protokolls, dies war
+  anfangs schwer in den AnyEvent Ablauf einzufügen.
+  
+- Wenig oder unübersichtliche Dokumentation der CPAN Module.
+  Informationen sind hier schwer zu finden wenn man nicht weiss wonach man sucht.
+  
+- Probleme mit Stored Procedures mit MySQL Version < 5.5  
+
+- Probleme mit Standardwerten der Datenbank-API.
+
+- Daten aus einer gespeicherten Session konnten nicht ge-
+  laden werden. Problem  war ein falsch gesetzter Parameter
+  beim Zuweisen des Session-Objektes.
+  
+- Handling des HTML-Layouts im Browser ist manchmal nicht logisch
+  vorherzusehen
+  
+- Schwierigkeiten bei der Koordination gemeinsamer arbeiten, da jeder
+  unterschiedliche Termine und Pflichten hatte
+  
+- Engpässe in der Tonerversorgung beim drucken des Quellcodes.
+
+- Schlafmangel
+  
+=== Online Testm&ouml;glichkeit und Online Dokumentation ===
+
+Die Software und Dokumentation wurde von uns auf einen Server im Internet
+gestellt.
+
+Folgende Links stehen zur Verfügung:
+
+- PMS - Chatclient: http://pms.muhla-solutions.de/client/
+  +
+  Zum testen des Clients einfach Verbinden und einen Channel erstellen
+  oder einem beitreten. +
+  Für eine Kommandoreferenz bitte im Kaptiel <<Base_Commands_List,Externe Schnittstellen/User-Schnittstelle (Kommandos) >> nachlesen. +
+  Für eine Kommandoreferenz des Security Moduls bitte im Kaptiel <<Security_Commands_List,Security Modul/User-Schnittstelle (Kommandos) >> nachlesen.
+  
+- PMS - Admin Interface: http://pms.muhla-solutions.de/admin/
+  +
+  Es wurde ein Testuser angelegt (testuser/passwort)
+  
+- Diese Dokumentation im HTML Format: http://pms.muhla-solutions.de/docs/handbook
+- Perl API Dokumentation der Server Software: http://pms.muhla-solutions.de/docs/server
+- Perl API Dokumentation der Admin Software: http://pms.muhla-solutions.de/docs/admin
+- PhpMyAdmin zum beobachten der Datenbank: http://pms.muhla-solutions.de/phpmyadmin (testuser/passwort)
+
+Es wird empfohlen, diese Dokumentation direkt im PDF oder HTML Format zu lesen, da wir 
+diverse Links und Querverweise zu den API-Dokumentation eingebaut haben um das Verständnis zu erleichtern
+
 == Implementation, Funktionsweise und Design des Core-Systems ==
 
 === Allgemein ===
@@ -158,9 +214,6 @@ Plugins::
   
 Es wäre denkbar selbst das Chat Protokoll als Modul zu implementieren, dies war jedoch im Rahmen des Projekts
 nicht möglich.
-
-MODUL BILD
-
 
 ==== Verwendete Fremdsoftware im Core ====
 
@@ -198,7 +251,7 @@ Als Ausgangspunkt wird von uns das auch dem CPAN nachinstallierte Modul Object::
 Möglichkeiten hatte zu testen ob ein bestimmtes Signal eigentlich existiert oder nicht, musste die Klasse noch erweitert
 werden. 
 
-Alle Objekte die Signale versenden wollen, müssen vom Objekt link:{pmsdocs}/files/Pms/Core/Object-pm.html[Pms::Core::Object] ableiten 
+Alle Objekte die Signale versenden wollen, müssen vom Objekt link:{pmsdocs}/files/Pms/Core/Object-pm.html[Pms::Core::Object] ableiten  +
 und in einem globalen Hash *%pmsEvents* alle von ihm versendeten Signale hinterlegen:
 
 [source,perl]
@@ -372,6 +425,8 @@ und initialisiert.
 Standardmässig sollten sie im Packet Pms::Net untergebracht sein, können aber durch Verwendung des 
 FQN in der Konfigurationsdatei von überall geladen werden (solange sie sich im Include Pfad befinden)
 
+<<<
+
 ==== Backend Implementation Websocket ====
 
 Die Referenzimplementation des Backends ist auf dem Modul AnyEvent::Handle und dem WebSocket Protokoll aufgebaut,
@@ -443,8 +498,6 @@ Letzteres ist aber aufgrund von Einschränkungen durch das WebSocket Protokoll n
 zulässt.
 Nun ist es ein leichtes für den Server zu erkennen wann eine Nachricht endet und wann er noch warten muss:
 
-FLOWCHART Netstring
-
 Weitere Informationen zu Netstring, findet man in der offiziellen Dokumentation:
 http://cr.yp.to/proto/netstrings.txt
 
@@ -512,6 +565,7 @@ hinterlegt wurde, und führt es aus. Als Parameter für den Callback wird immer
 als erstes Argument das Connection Objekt übergeben, das das Kommando ausführt, 
 danach das Array mit den Argumenten aus dem Hash. 
 
+[[Base_Commands_List]]
 ===== User-Schnittstelle (Kommandos) =====
 
 Der Core Server kommt von Haus aus mit einigen vordefinierten Kommandos:
@@ -534,8 +588,7 @@ Der Core Server kommt von Haus aus mit einigen vordefinierten Kommandos:
   Die Überschrift/ das Thema eines Channels ändern
   
 ===== Verarbeitungsschema eines Kommandos =====
-
-image:handle-data.png["Kommando Verarbeitung",scale]
+image:handle-data.png["Kommando Verarbeitung"]
   
 ==== Erweiterungs API f&uuml;r Module ====
 
@@ -691,10 +744,11 @@ Um in einen persistenten Channel betreten zu können benötigt ein User extra Re
 hier wird kein standard Regelpacket erzeugt, hat der User keine Rechte für diesen 
 Channel in der Datenbank ist es auch nicht möglich den Channel zu betreten.
 
-=== Überprüfung der Rechte (Schema) ===
+=== &Uuml;berpr&uuml;fung der Rechte (Schema) ===
 
 image:check-channel-rights.png["Channelrechte überprüfen",scale]
 
+[[Security_Commands_List]]
 === User-Schnittstelle (Kommandos) ===
 
 - */identify "username" "password"* +
@@ -707,6 +761,8 @@ image:check-channel-rights.png["Channelrechte überprüfen",scale]
   Einen Channeladministrator kann Admin Rechte eines anderen Users
   entfernen
   
+<<<  
+  
 == Administrations-Interface ==
 
 === Allgemein ===
@@ -714,20 +770,16 @@ image:check-channel-rights.png["Channelrechte überprüfen",scale]
 Um die Module und deren Einstellungen ,wie zB die Rechte des Security Moduls, zu verwalten
 wurde ein Webinterface auf Basis von Html, Javascript und Perl-CGI Programmierung entwickelt.
 Als Datenbankbackend kommt natürlich MySQL zum Einsatz.
-
-=== Aufbau des Source Codes ===
-
-image:source-tree.png["Ordner Struktur",scale]
     
 === Fremdsoftware ===
 
-- link:[JSON (2.53) und JSON::XS (2.27)]
+- link:http://search.cpan.org/~makamaka/JSON-2.53/lib/JSON.pm[JSON (2.53) und JSON::XS (2.27)]
 +
   Aus dem CPAN nachinstallierte Module, sie stellen einen Parser und Serializer
   für JSON Dokumente bereit. JSON ist ein leichtgewichtiges Datentransferformat, 
   das das Webinterface verwendet um Daten per AJAX vom Server abzuholen.
   
-- link:[HTML::Template]  
+- link:http://search.cpan.org/~wonko/HTML-Template-2.91/lib/HTML/Template.pm[HTML::Template]  
 +
   Aus dem CPAN nachinstalliertes Modul, es ermöglicht die strikte Trennung von HTML
   und Perl Code. Zu diesem Zweck wird der HTML Code in sogenannte Template Dateien 
@@ -745,6 +797,10 @@ image:source-tree.png["Ordner Struktur",scale]
   Bootstrap ist ein Html, Css und Javascript Framework, das vordefinierte Elemente 
   liefert, um das Styling und Erstellen von HTML basierten Interfaces zu erleichtern.
   Die komplette Ui des Admin Interfaces wurde mit Bootstrap erstellt.
+  
+=== Aufbau des Source Codes ===
+
+image:source-tree.png["Ordner Struktur",scale]  
   
 === Implementation und Design ===
 Auch das Admin Interface ist wie der Server modular aufgebaut. Server Module, die 
@@ -1063,10 +1119,6 @@ ALTER TABLE `mod_security_user_to_roles`
     ON UPDATE CASCADE;
 ----
 
-=== Indexe bzw. Unique Constraints ===
-
-NOCH TEXT MACHEN
-
 === Normalisierung ===
 
 Die Datenbank-Struktur wurde von uns so entworfen, 
@@ -1282,12 +1334,6 @@ BEGIN
       users.password = pass;
 END
 ----
-
-
-== Probleme ==
-
-=== Datenbank ===
-- Probleme mit Stored Procedures mit MySQL Version < 5.5
   
 == Logb&uuml;cher ==
 
@@ -1296,6 +1342,7 @@ END
 [options="header"]
 |=======
 | Name            | Date                           | Comment
+| Benjamin Zeller | Fri Apr 27 05:03:03 2012 | Docs
 | Lukas Michalski | Thu Apr 26 21:09:00 2012 |  Adding comment templates
 | Benjamin Zeller | Thu Apr 26 19:26:11 2012 |  Stored Procedures
 | Benjamin Zeller | Thu Apr 26 19:25:58 2012 |  Stored Procedures
@@ -1384,6 +1431,9 @@ END
 [options="header"]
 |=======
 | Name            | Date                           | Comment
+| Benjamin Zeller | Fri Apr 27 05:02:18 2012 | Merge branch 'master' of gitorious.org:p-ms/pms-admin
+| Benjamin Zeller | Fri Apr 27 05:01:56 2012 | Removed old files
+| Benjamin Zeller | Thu Apr 26 23:43:45 2012 | Added configuration, deleted old files
 | Benjamin Zeller | Wed Apr 25 16:42:16 2012 |  Last Changes, Feature Freeeze
 | Benjamin Zeller | Sat Apr 21 10:36:31 2012 |  Merge branch 'master' of gitorious.org:p-ms/pms-admin
 | Benjamin Zeller | Sat Apr 21 10:36:14 2012 |  Add Page to manage pms-admins
@@ -1471,6 +1521,12 @@ END
 [options="header"]
 |=======
 | Name            | Date                           | Comment
+| Benjamin Zeller | Fri Apr 27 15:32:17 2012 | removed temp files
+| Benjamin Zeller | Fri Apr 27 15:31:37 2012 | some flows and explanations
+| Lukas Michalski | Fri Apr 27 13:01:49 2012 | Correction part 2
+| Lukas Michalski | Fri Apr 27 12:59:16 2012 | Correction
+| Lukas Michalski | Fri Apr 27 12:53:40 2012 | Writing this document
+| Lukas Michalski | Fri Apr 27 10:07:48 2012 | Adding Logbuch of Thorsten Schwalb
 | Benjamin Zeller  |Fri Apr 27 04:52:42 2012 |Merge branch 'master' of gitorious.org:p-ms/pms-docs
 | Benjamin Zeller  |Fri Apr 27 04:52:24 2012 |Recreating docs
 | Lukas Michalski  |Fri Apr 27 04:52:13 2012 |adding database stuff
@@ -1515,6 +1571,7 @@ END
 
 [options="header"]
 |=======
+| Name             | Date            | Comment
 | Thorsten Schwalb | Thu Feb 23 2012 | Erstellung von admin.html
 | Thorsten Schwalb | Thu Feb 23 2012 | login_success.html
 | Thorsten Schwalb | Fri Feb 24 2012 | post.html
