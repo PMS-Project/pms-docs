@@ -534,7 +534,7 @@ Verarbeitung weitergegeben.
 
 === Das Server Object ===
 
-Das Herzstück, das link:[Pms::Application] Modul verbindet die bisher
+Das Herzstück, das link:http://pms.muhla-solutions.de/docs/server/files/Pms/Application-pm.html[Pms::Application] Modul verbindet die bisher
 beschriebenen Funktionalitäten miteinander. Es sorgt dafür, das die ConnectionProvider
 und Module geladen und initialisiert werden.
 
