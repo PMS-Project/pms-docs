@@ -23,10 +23,10 @@ if (browserType) {document.write("<div class=" + browserType + ">");if (browserV
 
 <div class="CFunction"><div class=CTopic><h3 class=CTitle><a name="Pms.Prot.Parser.parseMessage"></a>parseMessage</h3><div class=CBody><blockquote><table border=0 cellspacing=0 cellpadding=0 class="Prototype"><tr><td class="prettyprint">sub parseMessage</td></tr></table></blockquote><p>Takes the buffer and tries to read a command with all arguments out of it.</p><p>If a error happened it will return undef and set the m_lastError member which can be directly accessed from the caller.</p><blockquote><pre class="prettyprint">my %command = $parser-&gt;parseMessage($buffer);
 if($command != undef){
-    print &quot;CommandName: &quot;.$$command{command};
+    warn &quot;CommandName: &quot;.$$command{command};
 }else{
   if($parser-&gt;{m_lastError}){
-    print &quot;Error while parsing &quot;;
+    warn &quot;Error while parsing &quot;;
   }
 }</pre></blockquote><h4 class=CHeading>Access</h4><p>Public</p><h4 class=CHeading>Parameters</h4><table border=0 cellspacing=0 cellpadding=0 class=CDescriptionList><tr><td class=CDLEntry>buffer</td><td class=CDLDescription>The buffer that contains the message</td></tr></table><h4 class=CHeading>Returns</h4><p><b>undef</b> in case of a error</p><p>or a <b>hash</b> containing the name and the arguments for the command that needs to get called.</p></div></div></div>
 
